@@ -97,7 +97,7 @@ namespace
 // Initialization.
 
 
-ATOM TextEditor::RegisterWindowClass()
+ATOM TextEditor::RegisterWindowClass() // 创建一个窗口类
 {
     // Registers window class.
     WNDCLASSEX wcex;
