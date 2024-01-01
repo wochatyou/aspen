@@ -421,7 +421,7 @@ void TextEditor::OnDraw()
     {
         renderTarget_->BeginDraw();
         renderTarget_->Clear(D2D1::ColorF::LightGray);
-        DrawPage(*renderTarget_);
+        DrawPage(*renderTarget_); // 这个是关键函数
         renderTarget_->EndDraw();
     }
     EndPaint(hwnd_, &ps);
@@ -556,7 +556,7 @@ void TextEditor::RefreshView()
     // Redraws the text and scrollbars.
 
     UpdateScrollInfo();
-    PostRedraw();
+    PostRedraw(); // 就是发送一个重绘消息
 }
 
 
@@ -624,7 +624,7 @@ void TextEditor::OnScroll(UINT message, UINT request)
 }
 
 
-void TextEditor::UpdateScrollInfo()
+void TextEditor::UpdateScrollInfo() // 更新滚动条的信息
 {
     // Updates scroll bars.
 
@@ -1755,7 +1755,7 @@ void TextEditor::GetViewMatrix(OUT DWRITE_MATRIX* matrix) const
 
     // Need the editor size for centering.
     RECT rect;
-    GetClientRect(hwnd_, &rect);
+    GetClientRect(hwnd_, &rect); // 获得窗口的客户区大小
 
     // Translate the origin to 0,0
     DWRITE_MATRIX translationMatrix = {
