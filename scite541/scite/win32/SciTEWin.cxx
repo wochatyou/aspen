@@ -283,7 +283,9 @@ uintptr_t SciTEWin::GetInstance() {
 	return reinterpret_cast<uintptr_t>(hInstance);
 }
 
-void SciTEWin::Register(HINSTANCE hInstance_) {
+//X-创建窗口类
+void SciTEWin::Register(HINSTANCE hInstance_) 
+{
 	const TCHAR resourceName[] = TEXT("SciTE");
 
 	hInstance = hInstance_;
@@ -1603,7 +1605,8 @@ void SciTEWin::Run(const GUI::gui_char *cmdLine) {
 /**
  * Draw the split bar.
  */
-void ContentWin::Paint(HDC hDC, GUI::Rectangle) {
+void ContentWin::Paint(HDC hDC, GUI::Rectangle) 
+{
 	const GUI::Rectangle rcInternal = GetClientPosition();
 
 	const int heightClient = rcInternal.Height();
@@ -2003,7 +2006,9 @@ void SciTEWin::CheckForScintillaFailure(SA::Status statusFailure) noexcept {
 	}
 }
 
-LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
+//X-主窗口的消息处理函数
+LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) 
+{
 	try {
 		const LRESULT uim = uniqueInstance.CheckMessage(iMessage, wParam, lParam);
 		if (uim != 0) {
@@ -2184,23 +2189,29 @@ LRESULT SciTEWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 	return 0;
 }
 
+//X-最外层窗口的消息处理函数
 LRESULT PASCAL SciTEWin::TWndProc(
-	HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
-	if (iMessage == WM_CREATE) {
+	HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) 
+{
+	if (iMessage == WM_CREATE) //X-处理WM_CREATE消息
+	{
 		SciTEWin *scitePassed = static_cast<SciTEWin *>(SetWindowPointerFromCreate(hWnd, lParam));
 		scitePassed->wSciTE = hWnd;
 	}
 	// Find C++ object associated with window.
 	SciTEWin *scite = static_cast<SciTEWin *>(PointerFromWindow(hWnd));
 	// scite will be zero if WM_CREATE not seen yet
-	if (scite) {
+	if (scite) 
+	{
 		return scite->WndProc(iMessage, wParam, lParam);
 	} else {
 		return ::DefWindowProcW(hWnd, iMessage, wParam, lParam);
 	}
 }
 
-LRESULT ContentWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
+//X-真正的消息处理函数
+LRESULT ContentWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) 
+{
 	try {
 		switch (iMessage) {
 
@@ -2212,7 +2223,8 @@ LRESULT ContentWin::WndProc(UINT iMessage, WPARAM wParam, LPARAM lParam) {
 		case WM_NOTIFY:
 			return pSciTEWin->WndProc(iMessage, wParam, lParam);
 
-		case WM_PAINT: {
+		case WM_PAINT: 
+			{
 				PAINTSTRUCT ps;
 				::BeginPaint(Hwnd(), &ps);
 				const GUI::Rectangle rcPaint(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom);
@@ -2301,11 +2313,14 @@ std::string SciTEWin::GetRangeInUIEncoding(GUI::ScintillaWindow &win, SA::Span r
 	return s;
 }
 
-uintptr_t SciTEWin::EventLoop() {
+//X-典型的Windows消息循环
+uintptr_t SciTEWin::EventLoop() 
+{
 	MSG msg {};
 	msg.wParam = 0;
 	BOOL going = TRUE;
-	while (going) {
+	while (going) 
+	{
 		if (needIdle) {
 			const BOOL haveMessage = PeekMessageW(&msg, NULL, 0, 0, PM_NOREMOVE);
 			if (!haveMessage) {
@@ -2361,7 +2376,9 @@ extern "C" Scintilla::ILexer5 * __stdcall CreateLexer(const char *name);
 #pragma warning(disable: 28251)
 #endif
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
+//X-这里是程序入口
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) 
+{
 
 	RestrictDLLPath();
 
@@ -2384,8 +2401,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	Lexilla::SetDefault(CreateLexer);
 #else
 
-	HMODULE hmod = ::LoadLibrary(scintillaName);
-	if (!hmod) {
+	HMODULE hmod = ::LoadLibrary(scintillaName); //X- 加载Scintilla.DLL动态库
+	if (!hmod) //X-如果加载失败，就退出程序
+	{
 		GUI::gui_string explanation = scintillaName;
 		explanation += TEXT(" could not be loaded.  SciTE will now close");
 		::MessageBox(NULL, explanation.c_str(),

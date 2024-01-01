@@ -11,7 +11,7 @@
 namespace Scintilla::Internal {
 
 // Interface to per-line data that wants to see each line insertion and deletion
-class PerLine {
+class PerLine { //X-每一行的数据结构
 public:
 	virtual ~PerLine() {}
 	virtual void Init()=0;

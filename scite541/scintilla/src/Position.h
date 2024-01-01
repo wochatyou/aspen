@@ -16,10 +16,10 @@
 
 namespace Sci {
 
-typedef ptrdiff_t Position;
+typedef ptrdiff_t Position; //X- std::ptrdiff_t is the signed integer type of the result of subtracting two pointers. 这是一个有符号的整型
 typedef ptrdiff_t Line;
 
-inline constexpr Position invalidPosition = -1;
+inline constexpr Position invalidPosition = -1; //X- -1表示无效的位置
 
 }
 

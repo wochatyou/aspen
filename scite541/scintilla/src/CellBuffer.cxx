@@ -101,7 +101,7 @@ class LineStartIndex {
 		return static_cast<POS>(pos);
 	}
 public:
-	int refCount;
+	int refCount; //X-对象引用计数器，初始值为0
 	Partitioning<POS> starts;
 
 	LineStartIndex() : refCount(0), starts(4) {

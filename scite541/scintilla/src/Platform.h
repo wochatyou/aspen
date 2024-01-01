@@ -85,7 +85,7 @@ namespace Scintilla::Internal {
 
 // Underlying the implementation of the platform classes are platform specific types.
 // Sometimes these need to be passed around by client code so they are defined here
-
+//X-定义一个void*通用指针可以指向所有的对象
 typedef void *SurfaceID;
 typedef void *WindowID;
 typedef void *MenuID;
@@ -132,7 +132,9 @@ struct FontParameters {
 
 };
 
-class Font {
+//X-字体对象
+class Font 
+{
 public:
 	Font() noexcept = default;
 	// Deleted so Font objects can not be copied
@@ -181,7 +183,9 @@ struct SurfaceMode {
 /**
  * A surface abstracts a place to draw.
  */
-class Surface {
+//X-和平台无关的绘图表面，这是一个纯虚对象，需要被继承
+class Surface 
+{
 public:
 	Surface() noexcept = default;
 	Surface(const Surface &) = delete;
@@ -258,7 +262,8 @@ public:
  * Class to hide the details of window manipulation.
  * Does not own the window which will normally have a longer life than this object.
  */
-class Window {
+class Window 
+{
 protected:
 	WindowID wid;
 public:

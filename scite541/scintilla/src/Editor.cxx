@@ -1811,7 +1811,7 @@ void Editor::RefreshPixMaps(Surface *surfaceWindow) {
 	}
 }
 
-void Editor::Paint(Surface *surfaceWindow, PRectangle rcArea) {
+void Editor::Paint(Surface *surfaceWindow, PRectangle rcArea) { //X-绘制函数
 	redrawPendingText = false;
 	redrawPendingMargin = false;
 
@@ -1827,7 +1827,7 @@ void Editor::Paint(Surface *surfaceWindow, PRectangle rcArea) {
 
 	StyleAreaBounded(rcArea, false);
 
-	const PRectangle rcClient = GetClientRectangle();
+	const PRectangle rcClient = GetClientRectangle(); //X-获得客户区的坐标
 	//Platform::DebugPrintf("Client: (%3d,%3d) ... (%3d,%3d)   %d\n",
 	//	rcClient.left, rcClient.top, rcClient.right, rcClient.bottom);
 

@@ -44,7 +44,7 @@
 
 #if defined(USE_D2D)
 #include <d2d1.h>
-#include <dwrite.h>
+#include <dwrite.h>  //X-显示使用了Direct2D和DirectWrite
 #endif
 
 #include "ScintillaTypes.h"
@@ -78,7 +78,7 @@ D2D1_DRAW_TEXT_OPTIONS d2dDrawTextOptions = D2D1_DRAW_TEXT_OPTIONS_NONE;
 static HMODULE hDLLD2D {};
 static HMODULE hDLLDWrite {};
 
-void LoadD2DOnce() noexcept {
+void LoadD2DOnce() noexcept { //X-只加载D2D一次
 	DWORD loadLibraryFlags = 0;
 	HMODULE kernel32 = ::GetModuleHandleW(L"kernel32.dll");
 	if (kernel32) {
@@ -95,16 +95,16 @@ void LoadD2DOnce() noexcept {
 	typedef HRESULT (WINAPI *DWriteCFSig)(DWRITE_FACTORY_TYPE factoryType, REFIID iid,
 		IUnknown **factory);
 
-	hDLLD2D = ::LoadLibraryEx(TEXT("D2D1.DLL"), 0, loadLibraryFlags);
+	hDLLD2D = ::LoadLibraryEx(TEXT("D2D1.DLL"), 0, loadLibraryFlags); //X-初始化D2D的库
 	D2D1CFSig fnD2DCF = DLLFunction<D2D1CFSig>(hDLLD2D, "D2D1CreateFactory");
 	if (fnD2DCF) {
 		// A single threaded factory as Scintilla always draw on the GUI thread
 		fnD2DCF(D2D1_FACTORY_TYPE_SINGLE_THREADED,
 			__uuidof(ID2D1Factory),
 			nullptr,
-			reinterpret_cast<IUnknown**>(&pD2DFactory));
+			reinterpret_cast<IUnknown**>(&pD2DFactory)); //X-初始化D2Dfactory
 	}
-	hDLLDWrite = ::LoadLibraryEx(TEXT("DWRITE.DLL"), 0, loadLibraryFlags);
+	hDLLDWrite = ::LoadLibraryEx(TEXT("DWRITE.DLL"), 0, loadLibraryFlags); //X-加载DirectWrite的动态库
 	DWriteCFSig fnDWCF = DLLFunction<DWriteCFSig>(hDLLDWrite, "DWriteCreateFactory");
 	if (fnDWCF) {
 		const GUID IID_IDWriteFactory2 = // 0439fc60-ca44-4994-8dee-3a9af7b732ec
@@ -143,7 +143,7 @@ void SetWindowPointer(HWND hWnd, void *ptr) noexcept {
 namespace {
 
 // system DPI, same for all monitor.
-UINT uSystemDPI = USER_DEFAULT_SCREEN_DPI;
+UINT uSystemDPI = USER_DEFAULT_SCREEN_DPI; //X-缺省的DPI是96
 
 using GetDpiForWindowSig = UINT(WINAPI *)(HWND hwnd);
 GetDpiForWindowSig fnGetDpiForWindow = nullptr;
@@ -1285,7 +1285,9 @@ void SurfaceGDI::FlushDrawing() {
 
 namespace {
 
-constexpr D2D1_RECT_F RectangleFromPRectangle(PRectangle rc) noexcept {
+//X-两个矩形是一样的，无非是把double转换成FLOAT
+constexpr D2D1_RECT_F RectangleFromPRectangle(PRectangle rc) noexcept 
+{
 	return {
 		static_cast<FLOAT>(rc.left),
 		static_cast<FLOAT>(rc.top),
@@ -2352,16 +2354,19 @@ std::unique_ptr<IScreenLineLayout> SurfaceD2D::Layout(const IScreenLine *screenL
 	return std::make_unique<ScreenLineLayout>(screenLine);
 }
 
-void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, int codePageOverride, UINT fuOptions) {
-	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_);
+//X- D2D绘制字符的函数，核心是使用DrawTextLayout进行绘制
+void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text, int codePageOverride, UINT fuOptions) 
+{
+	const FontDirectWrite *pfm = FontDirectWrite::Cast(font_); 
 	if (pfm->pTextFormat && pRenderTarget && pBrush) {
 		// Use Unicode calls
 		const int codePageDraw = codePageOverride ? codePageOverride : pfm->CodePageText(mode.codePage);
 		const TextWide tbuf(text, codePageDraw);
 
 		SetFontQuality(pfm->extraFontFlag);
-		if (fuOptions & ETO_CLIPPED) {
-			const D2D1_RECT_F rcClip = RectangleFromPRectangle(rc);
+		if (fuOptions & ETO_CLIPPED) 
+		{
+			const D2D1_RECT_F rcClip = RectangleFromPRectangle(rc); //X-计算裁剪区域，rcClip和rc是一样大小的
 			pRenderTarget->PushAxisAlignedClip(rcClip, D2D1_ANTIALIAS_MODE_ALIASED);
 		}
 
@@ -2373,14 +2378,16 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION yba
 				pfm->pTextFormat,
 				static_cast<FLOAT>(rc.Width()),
 				static_cast<FLOAT>(rc.Height()),
-				&pTextLayout);
-		if (SUCCEEDED(hr)) {
-			const D2D1_POINT_2F origin = DPointFromPoint(Point(rc.left, ybase - pfm->yAscent));
-			pRenderTarget->DrawTextLayout(origin, pTextLayout, pBrush, d2dDrawTextOptions);
+				&pTextLayout); //X-在rc的区域内创建一个TextLayout
+		if (SUCCEEDED(hr)) 
+		{
+			const D2D1_POINT_2F origin = DPointFromPoint(Point(rc.left, ybase - pfm->yAscent)); //X-位置是怎么计算的？
+			pRenderTarget->DrawTextLayout(origin, pTextLayout, pBrush, d2dDrawTextOptions); //X-这是真正的绘图函数
 			ReleaseUnknown(pTextLayout);
 		}
 
-		if (fuOptions & ETO_CLIPPED) {
+		if (fuOptions & ETO_CLIPPED) //X-剪切区域
+		{
 			pRenderTarget->PopAxisAlignedClip();
 		}
 	}
@@ -2547,11 +2554,13 @@ void SurfaceD2D::DrawTextClippedUTF8(PRectangle rc, const Font *font_, XYPOSITIO
 	}
 }
 
+//X-D2D的绘制文本的函数，UTF8编码。text中包含绘制的字符
 void SurfaceD2D::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
-	ColourRGBA fore) {
+	ColourRGBA fore) 
+{
 	// Avoid drawing spaces in transparent mode
 	for (const char ch : text) {
-		if (ch != ' ') {
+		if (ch != ' ') { //如果不是空格的话
 			if (pRenderTarget) {
 				D2DPenColourAlpha(fore);
 				DrawTextCommon(rc, font_, ybase, text, CpUtf8, 0);

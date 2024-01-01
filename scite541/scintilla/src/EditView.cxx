@@ -2369,8 +2369,10 @@ void EditView::DrawIndentGuidesOverEmpty(Surface *surface, const EditModel &mode
 	}
 }
 
+//X-画一行
 void EditView::DrawLine(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
-	Sci::Line line, Sci::Line lineVisible, int xStart, PRectangle rcLine, int subLine, DrawPhase phase) {
+	Sci::Line line, Sci::Line lineVisible, int xStart, PRectangle rcLine, int subLine, DrawPhase phase) 
+{
 
 	if (subLine >= ll->lines) {
 		DrawAnnotation(surface, model, vsDraw, ll, line, xStart, rcLine, subLine, phase);
@@ -2467,8 +2469,10 @@ void EditView::DrawLine(Surface *surface, const EditModel &model, const ViewStyl
 	}
 }
 
+//X-绘制文字的函数
 void EditView::PaintText(Surface *surfaceWindow, const EditModel &model, const ViewStyle &vsDraw,
-	PRectangle rcArea, PRectangle rcClient) {
+	PRectangle rcArea, PRectangle rcClient) 
+{
 	// Allow text at start of line to overlap 1 pixel into the margin as this displays
 	// serifs and italic stems for aliased text.
 	const int leftTextOverlap = ((model.xOffset == 0) && (vsDraw.leftMarginWidth > 0)) ? 1 : 0;

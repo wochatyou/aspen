@@ -78,7 +78,7 @@ public:
  */
 class PRectangle {
 public:
-	XYPOSITION left;
+	XYPOSITION left; //X-XYPOSITION是double类型的
 	XYPOSITION top;
 	XYPOSITION right;
 	XYPOSITION bottom;
