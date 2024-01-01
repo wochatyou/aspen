@@ -259,7 +259,9 @@ struct CharacterExtracted {
 
 /**
  */
-class Document : PerLine, public Scintilla::IDocument, public Scintilla::ILoader, public Scintilla::IDocumentEditable {
+//X-文档描述对象，多重继承，都是纯虚对象
+class Document : PerLine, public Scintilla::IDocument, public Scintilla::ILoader, public Scintilla::IDocumentEditable 
+{
 
 public:
 	/** Used to pair watcher pointer with user data. */

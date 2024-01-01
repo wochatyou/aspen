@@ -1596,9 +1596,11 @@ GUI::Rectangle SciTEBase::GetClientRectangle() {
 	return wContent.GetClientPosition();
 }
 
-void SciTEBase::Redraw() {
+//X-这三个对象啥关系？ 重新绘制
+void SciTEBase::Redraw() 
+{
 	wSciTE.InvalidateAll();
-	wEditor.InvalidateAll();
+	wEditor.InvalidateAll(); //X- 就是调用InvalidateRect Win32 API
 	wOutput.InvalidateAll();
 }
 
@@ -2996,7 +2998,9 @@ int ControlIDOfCommand(unsigned long wParam) noexcept {
 	return wParam & 0xffff;
 }
 
-void WindowSetFocus(GUI::ScintillaWindow &w) {
+//X-向窗口w发送消息
+void WindowSetFocus(GUI::ScintillaWindow &w) 
+{
 	w.Send(SCI_GRABFOCUS);
 }
 

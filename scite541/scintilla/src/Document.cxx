@@ -1276,12 +1276,14 @@ bool Document::DeleteChars(Sci::Position pos, Sci::Position len) {
 /**
  * Insert a string with a length.
  */
-Sci::Position Document::InsertString(Sci::Position position, const char *s, Sci::Position insertLength) {
-	if (insertLength <= 0) {
+//X- 在指定的位置插入指定长度的字符串
+Sci::Position Document::InsertString(Sci::Position position, const char *s, Sci::Position insertLength) 
+{
+	if (insertLength <= 0) { //X-如果插入的字符串的长度是0，就啥也不做
 		return 0;
 	}
 	CheckReadOnly();	// Application may change read only state here
-	if (cb.IsReadOnly()) {
+	if (cb.IsReadOnly()) { //X-如果文档是只读的，就不能插入
 		return 0;
 	}
 	if (enteredModification != 0) {

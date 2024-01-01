@@ -1811,7 +1811,9 @@ void Editor::RefreshPixMaps(Surface *surfaceWindow) {
 	}
 }
 
-void Editor::Paint(Surface *surfaceWindow, PRectangle rcArea) { //X-绘制函数
+//X-绘制函数
+void Editor::Paint(Surface *surfaceWindow, PRectangle rcArea) 
+{ 
 	redrawPendingText = false;
 	redrawPendingMargin = false;
 
@@ -2182,9 +2184,12 @@ void Editor::InsertPaste(const char *text, Sci::Position len) {
 	}
 }
 
-void Editor::InsertPasteShape(const char *text, Sci::Position len, PasteShape shape) {
+//X-在指定的位置插入文本，譬如粘贴
+void Editor::InsertPasteShape(const char *text, Sci::Position len, PasteShape shape) 
+{
 	std::string convertedText;
-	if (convertPastes) {
+	if (convertPastes) 
+	{
 		// Convert line endings of the paste into our local line-endings mode
 		convertedText = Document::TransformLineEnds(text, len, pdoc->eolMode);
 		len = convertedText.length();

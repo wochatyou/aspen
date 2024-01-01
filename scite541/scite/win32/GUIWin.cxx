@@ -278,7 +278,9 @@ void Menu::Show(Point pt, Window &w) {
 	Destroy();
 }
 
-intptr_t ScintillaPrimitive::Send(unsigned int msg, uintptr_t wParam, intptr_t lParam) {
+//X-就是调用SendMessage往窗口发送消息
+intptr_t ScintillaPrimitive::Send(unsigned int msg, uintptr_t wParam, intptr_t lParam) 
+{
 	return ::SendMessage(static_cast<HWND>(GetID()), msg, wParam, lParam);
 }
 

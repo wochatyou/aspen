@@ -13,7 +13,9 @@
 
 namespace Scintilla {
 
-class ILoader {
+//X-纯虚对象
+class ILoader 
+{
 public:
 	virtual int SCI_METHOD Release() = 0;
 	// Returns a status code from SC_STATUS_*
@@ -23,7 +25,9 @@ public:
 
 static constexpr int deRelease0 = 0;
 
-class IDocumentEditable {
+//X-纯虚对象，没啥实际逻辑
+class IDocumentEditable 
+{
 public:
 	// Allow this interface to add methods over time and discover whether new methods available.
 	virtual int SCI_METHOD DEVersion() const noexcept = 0;

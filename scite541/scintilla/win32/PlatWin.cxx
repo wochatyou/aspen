@@ -244,7 +244,9 @@ constexpr D2D1_TEXT_ANTIALIAS_MODE DWriteMapFontQuality(FontQuality extraFontFla
 #endif
 
 // Both GDI and DirectWrite can produce a HFONT for use in list boxes
-struct FontWin : public Font {
+//X-Windows平台下的字体对象，纯虚对象，需要继承
+struct FontWin : public Font 
+{
 	virtual HFONT HFont() const noexcept = 0;
 };
 
@@ -286,7 +288,8 @@ struct FontGDI : public FontWin {
 };
 
 #if defined(USE_D2D)
-struct FontDirectWrite : public FontWin {
+struct FontDirectWrite : public FontWin 
+{
 	IDWriteTextFormat *pTextFormat = nullptr;
 	FontQuality extraFontFlag = FontQuality::QualityDefault;
 	CharacterSet characterSet = CharacterSet::Ansi;
@@ -2392,10 +2395,12 @@ void SurfaceD2D::DrawTextCommon(PRectangle rc, const Font *font_, XYPOSITION yba
 		}
 	}
 }
-
+//X-绘制文本分clip和不clip两种模式
 void SurfaceD2D::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
-	ColourRGBA fore, ColourRGBA back) {
-	if (pRenderTarget) {
+	ColourRGBA fore, ColourRGBA back) 
+{
+	if (pRenderTarget) 
+	{
 		FillRectangleAligned(rc, back);
 		D2DPenColourAlpha(fore);
 		DrawTextCommon(rc, font_, ybase, text, 0, ETO_OPAQUE);
@@ -2403,8 +2408,10 @@ void SurfaceD2D::DrawTextNoClip(PRectangle rc, const Font *font_, XYPOSITION yba
 }
 
 void SurfaceD2D::DrawTextClipped(PRectangle rc, const Font *font_, XYPOSITION ybase, std::string_view text,
-	ColourRGBA fore, ColourRGBA back) {
-	if (pRenderTarget) {
+	ColourRGBA fore, ColourRGBA back) 
+{
+	if (pRenderTarget) 
+	{
 		FillRectangleAligned(rc, back);
 		D2DPenColourAlpha(fore);
 		DrawTextCommon(rc, font_, ybase, text, 0, ETO_OPAQUE | ETO_CLIPPED);
@@ -2559,9 +2566,11 @@ void SurfaceD2D::DrawTextTransparentUTF8(PRectangle rc, const Font *font_, XYPOS
 	ColourRGBA fore) 
 {
 	// Avoid drawing spaces in transparent mode
-	for (const char ch : text) {
+	for (const char ch : text) //X-如果这一行都是空格，就不绘制，否则就绘制这一行
+	{
 		if (ch != ' ') { //如果不是空格的话
-			if (pRenderTarget) {
+			if (pRenderTarget) 
+			{
 				D2DPenColourAlpha(fore);
 				DrawTextCommon(rc, font_, ybase, text, CpUtf8, 0);
 			}

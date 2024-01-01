@@ -939,10 +939,12 @@ void FillLineRemainder(Surface *surface, const EditModel &model, const ViewStyle
 
 }
 
+//X-绘制文本的函数
 void EditView::DrawEOL(Surface *surface, const EditModel &model, const ViewStyle &vsDraw, const LineLayout *ll,
-	Sci::Line line, int xStart, PRectangle rcLine, int subLine, Sci::Position lineEnd, XYPOSITION subLineStart, ColourOptional background) {
+	Sci::Line line, int xStart, PRectangle rcLine, int subLine, Sci::Position lineEnd, XYPOSITION subLineStart, ColourOptional background) 
+{
 
-	const Sci::Position posLineStart = model.pdoc->LineStart(line);
+	const Sci::Position posLineStart = model.pdoc->LineStart(line); //X-获得起始行的位置
 	PRectangle rcSegment = rcLine;
 
 	const bool lastSubLine = subLine == (ll->lines - 1);
@@ -2475,10 +2477,11 @@ void EditView::PaintText(Surface *surfaceWindow, const EditModel &model, const V
 {
 	// Allow text at start of line to overlap 1 pixel into the margin as this displays
 	// serifs and italic stems for aliased text.
-	const int leftTextOverlap = ((model.xOffset == 0) && (vsDraw.leftMarginWidth > 0)) ? 1 : 0;
+	const int leftTextOverlap = ((model.xOffset == 0) && (vsDraw.leftMarginWidth > 0)) ? 1 : 0; //X-一个像素
 
 	// Do the painting
-	if (rcArea.right > vsDraw.textStart - leftTextOverlap) {
+	if (rcArea.right > vsDraw.textStart - leftTextOverlap) 
+	{
 
 		Surface *surface = surfaceWindow;
 		if (bufferedDraw) {

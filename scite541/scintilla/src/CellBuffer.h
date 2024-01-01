@@ -126,7 +126,12 @@ struct SplitView {
  * Based on article "Data Structures in a Bit-Mapped Text Editor"
  * by Wilfred J. Hansen, Byte January 1987, page 183.
  */
-class CellBuffer {
+//X- Each byte in a Scintilla document is associated with a byte of styling information. 
+//X- The combination of a character byte and a style byte is called a cell. Style bytes 
+//X- are interpreted an index into an array of styles.
+//X-这块的思想要好好理解一下
+class CellBuffer 
+{
 private:
 	bool hasStyles;
 	bool largeDocument;

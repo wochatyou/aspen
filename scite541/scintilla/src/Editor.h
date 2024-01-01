@@ -64,8 +64,10 @@ public:
 /**
  * Hold a piece of text selected for copying or dragging, along with encoding and selection format information.
  */
-class SelectionText {
-	std::string s;
+//X-这个对象描述了选择的文本。被选择的文本可以拷贝或者拖拽
+class SelectionText 
+{
+	std::string s; //X-使用的是std的string来存储选择的文本
 public:
 	bool rectangular;
 	bool lineCopy;

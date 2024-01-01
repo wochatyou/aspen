@@ -325,8 +325,9 @@ namespace Scintilla::Internal {
 
 /**
  */
-class ScintillaWin :
-	public ScintillaBase {
+//X-ScintillaWin的窗口	
+class ScintillaWin : public ScintillaBase 
+{
 
 	bool lastKeyDownConsumed;
 	wchar_t lastHighSurrogateChar;
@@ -2650,9 +2651,12 @@ std::string ScintillaWin::CaseMapString(const std::string &s, CaseMapping caseMa
 	return sConverted;
 }
 
-void ScintillaWin::Copy() {
+//X-拷贝选取的内容
+void ScintillaWin::Copy() 
+{
 	//Platform::DebugPrintf("Copy\n");
-	if (!sel.Empty()) {
+	if (!sel.Empty()) 
+	{
 		SelectionText selectedText;
 		CopySelectionRange(&selectedText);
 		CopyToClipboard(selectedText);
@@ -2716,12 +2720,17 @@ public:
 // OpenClipboard may fail if another application has opened the clipboard.
 // Try up to 8 times, with an initial delay of 1 ms and an exponential back off
 // for a maximum total delay of 127 ms (1+2+4+8+16+32+64).
-bool OpenClipboardRetry(HWND hwnd) noexcept {
-	for (int attempt=0; attempt<8; attempt++) {
-		if (attempt > 0) {
-			::Sleep(1 << (attempt-1));
+//X- 起始就是调用Win32API : OpenClipboard 
+bool OpenClipboardRetry(HWND hwnd) noexcept 
+{
+	for (int attempt=0; attempt<8; attempt++) 
+	{
+		if (attempt > 0) 
+		{
+			::Sleep(1 << (attempt-1)); //X-休眠的时间不断加长，最长共计127毫秒
 		}
-		if (::OpenClipboard(hwnd)) {
+		if (::OpenClipboard(hwnd)) 
+		{
 			return true;
 		}
 	}
@@ -2742,8 +2751,11 @@ bool SupportedFormat(const FORMATETC *pFE) noexcept {
 
 }
 
-void ScintillaWin::Paste() {
-	if (!::OpenClipboardRetry(MainHWND())) {
+//X-处理粘贴的功能
+void ScintillaWin::Paste() 
+{
+	if (!::OpenClipboardRetry(MainHWND())) //X-打开剪切板失败了，就啥也不做，返回
+	{
 		return;
 	}
 	UndoGroup ug(pdoc);
@@ -2764,9 +2776,10 @@ void ScintillaWin::Paste() {
 
 	// Use CF_UNICODETEXT if available
 	GlobalMemory memUSelection(::GetClipboardData(CF_UNICODETEXT));
-	if (const wchar_t *uptr = static_cast<const wchar_t *>(memUSelection.ptr)) {
+	if (const wchar_t *uptr = static_cast<const wchar_t *>(memUSelection.ptr)) 
+	{
 		const std::string putf = EncodeWString(uptr);
-		InsertPasteShape(putf.c_str(), putf.length(), pasteShape);
+		InsertPasteShape(putf.c_str(), putf.length(), pasteShape); //X-把文本插入到合适的位置
 		memUSelection.Unlock();
 	}
 	::CloseClipboard();
@@ -3225,11 +3238,14 @@ void ScintillaWin::CopyToGlobal(GlobalMemory &gmUnicode, const SelectionText &se
 	}
 }
 
-void ScintillaWin::CopyToClipboard(const SelectionText &selectedText) {
-	if (!::OpenClipboardRetry(MainHWND())) {
+//X-把选取的内容拷贝到剪切板上
+void ScintillaWin::CopyToClipboard(const SelectionText &selectedText) 
+{
+	if (!::OpenClipboardRetry(MainHWND())) //X-如果打开剪切板失败，就返回
+	{
 		return;
 	}
-	::EmptyClipboard();
+	::EmptyClipboard(); //X-清空剪切板
 
 	GlobalMemory uniText;
 	CopyToGlobal(uniText, selectedText);
