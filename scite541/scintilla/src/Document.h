@@ -28,8 +28,8 @@ enum class EncodingFamily { eightBit, unicode, dbcs };
  */
 class Range {
 public:
-	Sci::Position start;
-	Sci::Position end;
+	Sci::Position start; //X-Postion是有符号的整数，这是开始位置
+	Sci::Position end;   //X-结束位置
 
 	explicit Range(Sci::Position pos=0) noexcept :
 		start(pos), end(pos) {
@@ -38,32 +38,32 @@ public:
 		start(start_), end(end_) {
 	}
 
-	bool operator==(const Range &other) const noexcept {
+	bool operator==(const Range &other) const noexcept { //X-判断和另外一个Range是否相等，必须起点和终点都相等才算相等
 		return (start == other.start) && (end == other.end);
 	}
 
-	bool Valid() const noexcept {
+	bool Valid() const noexcept { //X-起点和终点都是invalidPosition
 		return (start != Sci::invalidPosition) && (end != Sci::invalidPosition);
 	}
 
-	[[nodiscard]] bool Empty() const noexcept {
+	[[nodiscard]] bool Empty() const noexcept { //X-起点和终点都相等即为空
 		return start == end;
 	}
 
 	[[nodiscard]] Sci::Position Length() const noexcept {
-		return (start <= end) ? (end - start) : (start - end);
+		return (start <= end) ? (end - start) : (start - end); //起点不一定小于终点，但是长度总是返回正数
 	}
 
 	Sci::Position First() const noexcept {
-		return (start <= end) ? start : end;
+		return (start <= end) ? start : end; //X-返回最左边的那个位置，可能是起点，也可能是终点
 	}
 
 	Sci::Position Last() const noexcept {
-		return (start > end) ? start : end;
+		return (start > end) ? start : end; //X-返回最右边的位置，可能是起点也可能是终点
 	}
 
 	// Is the position within the range?
-	bool Contains(Sci::Position pos) const noexcept {
+	bool Contains(Sci::Position pos) const noexcept { //X-判断这个位置是否在这个Range当中
 		if (start < end) {
 			return (pos >= start && pos <= end);
 		} else {
