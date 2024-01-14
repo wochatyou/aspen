@@ -105,7 +105,7 @@ HRESULT MainWindow::Initialize()
                 DWRITE_FACTORY_TYPE_SHARED,
                 __uuidof(IDWriteFactory),
                 reinterpret_cast<IUnknown**>(&dwriteFactory_)
-                );
+                ); //x 创建DWrite工厂
     }
 
     // Create D2D factory

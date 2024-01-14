@@ -135,7 +135,7 @@ class CellBuffer
 private:
 	bool hasStyles;
 	bool largeDocument;
-	SplitVector<char> substance;
+	SplitVector<char> substance; // 就是一个字符串数组
 	SplitVector<char> style;
 	bool readOnly;
 	bool utf8Substance;

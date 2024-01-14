@@ -623,20 +623,24 @@ CellBuffer::CellBuffer(bool hasStyles_, bool largeDocument_) :
 
 CellBuffer::~CellBuffer() noexcept = default;
 
-char CellBuffer::CharAt(Sci::Position position) const noexcept {
+char CellBuffer::CharAt(Sci::Position position) const noexcept //X-返回指定位置的字符
+{
 	return substance.ValueAt(position);
 }
 
-unsigned char CellBuffer::UCharAt(Sci::Position position) const noexcept {
+unsigned char CellBuffer::UCharAt(Sci::Position position) const noexcept 
+{
 	return substance.ValueAt(position);
 }
 
-void CellBuffer::GetCharRange(char *buffer, Sci::Position position, Sci::Position lengthRetrieve) const {
-	if (lengthRetrieve <= 0)
+void CellBuffer::GetCharRange(char *buffer, Sci::Position position, Sci::Position lengthRetrieve) const 
+{
+	if (lengthRetrieve <= 0) // 长度数据是负数，就直接返回
 		return;
-	if (position < 0)
+	if (position < 0) // 位置应该从0开始才合法
 		return;
-	if ((position + lengthRetrieve) > substance.Length()) {
+	if ((position + lengthRetrieve) > substance.Length()) 
+	{
 		Platform::DebugPrintf("Bad GetCharRange %.0f for %.0f of %.0f\n",
 				      static_cast<double>(position),
 				      static_cast<double>(lengthRetrieve),
@@ -646,16 +650,19 @@ void CellBuffer::GetCharRange(char *buffer, Sci::Position position, Sci::Positio
 	substance.GetRange(buffer, position, lengthRetrieve);
 }
 
-char CellBuffer::StyleAt(Sci::Position position) const noexcept {
+char CellBuffer::StyleAt(Sci::Position position) const noexcept //X-如果有style，就返回style数组对应位置的字符
+{
 	return hasStyles ? style.ValueAt(position) : '\0';
 }
 
-void CellBuffer::GetStyleRange(unsigned char *buffer, Sci::Position position, Sci::Position lengthRetrieve) const {
+//X-这个函数
+void CellBuffer::GetStyleRange(unsigned char *buffer, Sci::Position position, Sci::Position lengthRetrieve) const 
+{
 	if (lengthRetrieve < 0)
 		return;
 	if (position < 0)
 		return;
-	if (!hasStyles) {
+	if (!hasStyles) { //X-如果没有style，就在buffer中填满0
 		std::fill(buffer, buffer + lengthRetrieve, static_cast<unsigned char>(0));
 		return;
 	}
@@ -669,7 +676,8 @@ void CellBuffer::GetStyleRange(unsigned char *buffer, Sci::Position position, Sc
 	style.GetRange(reinterpret_cast<char *>(buffer), position, lengthRetrieve);
 }
 
-const char *CellBuffer::BufferPointer() {
+const char *CellBuffer::BufferPointer() //X-返回数据的指针
+{
 	return substance.BufferPointer();
 }
 
@@ -715,7 +723,8 @@ const char *CellBuffer::InsertString(Sci::Position position, const char *s, Sci:
 	return data;
 }
 
-bool CellBuffer::SetStyleAt(Sci::Position position, char styleValue) noexcept {
+bool CellBuffer::SetStyleAt(Sci::Position position, char styleValue) noexcept //X-设置指定位置的style，设置成功就返回true
+{
 	if (!hasStyles) {
 		return false;
 	}
@@ -728,7 +737,9 @@ bool CellBuffer::SetStyleAt(Sci::Position position, char styleValue) noexcept {
 	}
 }
 
-bool CellBuffer::SetStyleFor(Sci::Position position, Sci::Position lengthStyle, char styleValue) noexcept {
+//X-把一个区域的文字的style设置为styleValue
+bool CellBuffer::SetStyleFor(Sci::Position position, Sci::Position lengthStyle, char styleValue) noexcept 
+{
 	if (!hasStyles) {
 		return false;
 	}
@@ -751,7 +762,7 @@ const char *CellBuffer::DeleteChars(Sci::Position position, Sci::Position delete
 	// InsertString and DeleteChars are the bottleneck though which all changes occur
 	PLATFORM_ASSERT(deleteLength > 0);
 	const char *data = nullptr;
-	if (!readOnly) {
+	if (!readOnly) { //X-如果是只读的，就啥也不做
 		if (collectingUndo) {
 			// Save into the undo/redo stack, but only the characters - not the formatting
 			// The gap would be moved to position anyway for the deletion so this doesn't cost extra
@@ -769,7 +780,9 @@ const char *CellBuffer::DeleteChars(Sci::Position position, Sci::Position delete
 	return data;
 }
 
-Sci::Position CellBuffer::Length() const noexcept {
+//X-返回文本的长度
+Sci::Position CellBuffer::Length() const noexcept 
+{
 	return substance.Length();
 }
 
