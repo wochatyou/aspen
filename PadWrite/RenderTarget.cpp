@@ -273,7 +273,7 @@ void RenderTargetD2D::DrawImage(
 }
 
 
-void RenderTargetD2D::DrawTextLayout(
+void RenderTargetD2D::DrawTextLayout( /// 在指定的位置上绘制文本
     IDWriteTextLayout* textLayout,
     const RectF& rect
     )
@@ -282,7 +282,7 @@ void RenderTargetD2D::DrawTextLayout(
         return;
 
     Context context(this, NULL);
-    textLayout->Draw(
+    textLayout->Draw( /// 这是Win32 API
         &context,
         this,
         rect.left,
@@ -385,7 +385,7 @@ HRESULT STDMETHODCALLTYPE RenderTargetD2D::DrawUnderline(
    };
 
     // Draw this as a rectangle, rather than a line.
-    target_->FillRectangle(&rectangle, brush);
+    target_->FillRectangle(&rectangle, brush); /// 就是绘制一个矩形
 
     return S_OK;
 }

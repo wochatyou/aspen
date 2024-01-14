@@ -128,7 +128,7 @@ public:
         const DrawingEffect& drawingEffect
         );
 
-    // IDWriteTextRenderer implementation
+    // IDWriteTextRenderer implementation /// 必须实现这些回调函数
 
     IFACEMETHOD(DrawGlyphRun)(
         void* clientDrawingContext,

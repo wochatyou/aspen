@@ -136,7 +136,7 @@ TextEditor::TextEditor(IDWriteFactory* factory)
 
 HRESULT TextEditor::Create(
     HWND parentHwnd,
-    const wchar_t* text,
+    const wchar_t* text, /// 这是要显示的文本
     IDWriteTextFormat* textFormat,
     IDWriteFactory* factory,
     OUT TextEditor** textEditor
@@ -169,7 +169,7 @@ HRESULT TextEditor::Initialize(HWND parentHwnd, const wchar_t* text, IDWriteText
     // Set the initial text.
     try
     {
-        text_.assign(text);
+        text_.assign(text); /// text里面就是要显示的文本
     }
     catch (...)
     {
@@ -178,7 +178,7 @@ HRESULT TextEditor::Initialize(HWND parentHwnd, const wchar_t* text, IDWriteText
 
     // Create an ideal layout for the text editor based on the text and format,
     // favoring document layout over pixel alignment.
-    hr = layoutEditor_.GetFactory()->CreateTextLayout(
+    hr = layoutEditor_.GetFactory()->CreateTextLayout( /// 每一个IDWriteTextLayout对应一个字符串
             text_.c_str(),
             static_cast<UINT32>(text_.size()),
             textFormat,
@@ -428,7 +428,7 @@ void TextEditor::OnDraw()
 }
 
 
-void TextEditor::DrawPage(RenderTarget& target)
+void TextEditor::DrawPage(RenderTarget& target) /// 显示屏幕的主函数
 {
     // Draws the background, page, selection, and text.
 
@@ -446,27 +446,27 @@ void TextEditor::DrawPage(RenderTarget& target)
     D2D1_POINT_2F pageSize = GetPageSize(textLayout_);
     RectF pageRect = {0, 0, pageSize.x, pageSize.y};
 
-    target.FillRectangle(pageRect, *pageBackgroundEffect_);
+    target.FillRectangle(pageRect, *pageBackgroundEffect_); // 填充区域
 
     // Determine actual number of hit-test ranges
     DWRITE_TEXT_RANGE caretRange = GetSelectionRange();
     UINT32 actualHitTestCount = 0;
 
-    if (caretRange.length > 0)
+    if (caretRange.length > 0) /// 如果有选择的文本
     {
-        textLayout_->HitTestTextRange(
+        textLayout_->HitTestTextRange( /// API，测试选取文本
             caretRange.startPosition,
             caretRange.length,
             0, // x
             0, // y
             NULL,
             0, // metrics count
-            &actualHitTestCount
+            &actualHitTestCount /// 主要是获得这个输出结果，下面数组的个数
             );
     }
 
-    // Allocate enough room to return all hit-test metrics.
-    std::vector<DWRITE_HIT_TEST_METRICS> hitTestMetrics(actualHitTestCount);
+    // Allocate enough room to return all hit-test metrics. /// 这块的逻辑是先测试有几个，再分配数组，再获取
+    std::vector<DWRITE_HIT_TEST_METRICS> hitTestMetrics(actualHitTestCount); /// 分配一个数组
 
     if (caretRange.length > 0)
     {
@@ -482,7 +482,7 @@ void TextEditor::DrawPage(RenderTarget& target)
     }
 
     // Draw the selection ranges behind the text.
-    if (actualHitTestCount > 0)
+    if (actualHitTestCount > 0) /// 如果有选取的文本
     {
         // Note that an ideal layout will return fractional values,
         // so you may see slivers between the selection ranges due
@@ -492,7 +492,7 @@ void TextEditor::DrawPage(RenderTarget& target)
 
         for (size_t i = 0; i < actualHitTestCount; ++i)
         {
-            const DWRITE_HIT_TEST_METRICS& htm = hitTestMetrics[i];
+            const DWRITE_HIT_TEST_METRICS& htm = hitTestMetrics[i]; /// 依次获得每个被选择的字符的信息
             RectF highlightRect = {
                 htm.left,
                 htm.top,
@@ -500,7 +500,7 @@ void TextEditor::DrawPage(RenderTarget& target)
                 (htm.top  + htm.height)
             };
             
-            target.FillRectangle(highlightRect, *textSelectionEffect_);
+            target.FillRectangle(highlightRect, *textSelectionEffect_); /// 填充选择文本的背景色
         }
 
         target.SetAntialiasing(true);
@@ -511,15 +511,15 @@ void TextEditor::DrawPage(RenderTarget& target)
     GetCaretRect(caretRect);
     target.SetAntialiasing(false);
     target.FillRectangle(caretRect, *caretBackgroundEffect_);
-    target.SetAntialiasing(true);
+    target.SetAntialiasing(true); /// 绘制光标
 
     // Draw text
-    target.DrawTextLayout(textLayout_, pageRect);
+    target.DrawTextLayout(textLayout_, pageRect); /// 绘制文本， 这是绘制文本的主力函数
 
     // Draw the selection ranges in front of images.
     // This shades otherwise opaque images so they are visibly selected,
     // checking the isText field of the hit-test metrics.
-    if (actualHitTestCount > 0)
+    if (actualHitTestCount > 0) /// 这块好像是处理图像的绘制的
     {
         // Note that an ideal layout will return fractional values,
         // so you may see slivers between the selection ranges due
@@ -556,7 +556,7 @@ void TextEditor::RefreshView()
     // Redraws the text and scrollbars.
 
     UpdateScrollInfo();
-    PostRedraw(); // 就是发送一个重绘消息
+    PostRedraw(); // 就是发送一个重绘消息 void PostRedraw() { InvalidateRect(hwnd_, NULL, FALSE); }
 }
 
 
@@ -974,7 +974,7 @@ void TextEditor::OnKeyCharacter(UINT32 charCode)
     // Inserts text characters.
 
     // Allow normal characters and tabs
-    if (charCode >= 0x20 || charCode == 9)
+    if (charCode >= 0x20 || charCode == 9) /// 大于空格，或者是TAB键
     {
         // Replace any existing selection.
         DeleteSelection();
@@ -998,7 +998,7 @@ void TextEditor::OnKeyCharacter(UINT32 charCode)
         layoutEditor_.InsertTextAt(textLayout_, text_, caretPosition_ + caretPositionOffset_, chars, charsLength, &caretFormat_);
         SetSelection(SetSelectionModeRight, charsLength, false, false);
 
-        RefreshView();
+        RefreshView(); /// 刷新屏幕
     }
 }
 
@@ -1013,7 +1013,8 @@ UINT32 TextEditor::GetCaretPosition()
 }
 
 
-DWRITE_TEXT_RANGE TextEditor::GetSelectionRange()
+/// 返回选取文本的范围，起始点和长度， 这个函数没有调用API，只是内部几个变量的计算
+DWRITE_TEXT_RANGE TextEditor::GetSelectionRange() /// struct DWRITE_TEXT_RANGE { UINT32 startPosition； UINT32 length; }
 {
     // Returns a valid range of the current selection,
     // regardless of whether the caret or anchor is first.
@@ -1021,10 +1022,10 @@ DWRITE_TEXT_RANGE TextEditor::GetSelectionRange()
     UINT32 caretBegin = caretAnchor_;
     UINT32 caretEnd   = caretPosition_ + caretPositionOffset_;
     if (caretBegin > caretEnd)
-        std::swap(caretBegin, caretEnd);
+        std::swap(caretBegin, caretEnd); /// 确保起点比终点低
 
     // Limit to actual text length.
-    UINT32 textLength = static_cast<UINT32>(text_.size());
+    UINT32 textLength = static_cast<UINT32>(text_.size()); // 限制一下长度不要超过文档的长度
     caretBegin = PGCORE_Min(caretBegin,   textLength);
     caretEnd   = PGCORE_Min(caretEnd,     textLength);
 
@@ -1440,7 +1441,7 @@ bool TextEditor::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
 }
 
 
-void TextEditor::GetCaretRect(OUT RectF& rect)
+void TextEditor::GetCaretRect(OUT RectF& rect) // 获得光标的位置
 {
     // Gets the current caret position (in untransformed space).
 
@@ -1454,12 +1455,12 @@ void TextEditor::GetCaretRect(OUT RectF& rect)
     DWRITE_HIT_TEST_METRICS caretMetrics;
     float caretX, caretY;
 
-    textLayout_->HitTestTextPosition(
+    textLayout_->HitTestTextPosition( //x-这个是WIN32 API，真正干活的
         caretPosition_,
         caretPositionOffset_ > 0, // trailing if nonzero, else leading edge
         &caretX,
         &caretY,
-        &caretMetrics
+        &caretMetrics ///后面三个都是输出结果
         );
 
     // If a selection exists, draw the caret using the
@@ -1495,7 +1496,7 @@ void TextEditor::GetCaretRect(OUT RectF& rect)
 }
 
 
-void TextEditor::UpdateSystemCaret(const RectF& rect)
+void TextEditor::UpdateSystemCaret(const RectF& rect) //x-把系统光标放在指定的区域
 {
     // Moves the system caret to a new position.
 
@@ -1507,14 +1508,14 @@ void TextEditor::UpdateSystemCaret(const RectF& rect)
 
     // Gets the current caret position (in untransformed space).
 
-    if (GetFocus() != hwnd_) // Only update if we have focus.
+    if (GetFocus() != hwnd_) // Only update if we have focus. // 我们没有焦点，就啥也不做
         return;
 
     D2D1::Matrix3x2F pageTransform;
     GetViewMatrix(&Cast(pageTransform));
 
     // Transform caret top/left and size according to current scale and origin.
-    D2D1_POINT_2F caretPoint = pageTransform.TransformPoint(D2D1::Point2F(rect.left, rect.top));
+    D2D1_POINT_2F caretPoint = pageTransform.TransformPoint(D2D1::Point2F(rect.left, rect.top)); // 进行位置转换
 
     float width  = (rect.right - rect.left);
     float height = (rect.bottom - rect.top);

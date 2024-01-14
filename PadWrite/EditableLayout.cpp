@@ -21,7 +21,7 @@ HRESULT EditableLayout::RecreateLayout(
     const std::wstring& text
     )
 {
-    // Recreates the internally held layout.
+    // Recreates the internally held layout. /// 重新创建IDWriteTextLayout
 
     HRESULT hr = S_OK;
 
@@ -216,14 +216,14 @@ STDMETHODIMP EditableLayout::InsertTextAt(
     // If there is no text right before position, so use the properties of the character right after position.
 
     // Copy all the old formatting.
-    IDWriteTextLayout* oldLayout = SafeAcquire(currentLayout);
+    IDWriteTextLayout* oldLayout = SafeAcquire(currentLayout); /// 就是把这个对象的计数器加一
     UINT32 oldTextLength = static_cast<UINT32>(text.length());
     position = PGCORE_Min(position, static_cast<UINT32>(text.size()));
 
     try
     {
-        // Insert the new text and recreate the new text layout.
-        text.insert(position, textToInsert, textToInsertLength);
+        // Insert the new text and recreate the new text layout. /// 一旦IDWriteTextLayout里面的文本发生了变化，就要重新创建它
+        text.insert(position, textToInsert, textToInsertLength); /// textToInsert就是要插入的字符，一次插入一个
     }
     catch (...)
     {
@@ -232,7 +232,7 @@ STDMETHODIMP EditableLayout::InsertTextAt(
 
     if (SUCCEEDED(hr))
     {
-        hr = RecreateLayout(currentLayout, text);
+        hr = RecreateLayout(currentLayout, text); // 重新创建一个IDWriteTextLayout
     }
 
     IDWriteTextLayout* newLayout = currentLayout;
