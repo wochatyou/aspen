@@ -459,6 +459,7 @@ public:
         IUnknown* clientDrawingEffect
         )
     {
+#if 0        
         clientDrawingEffect = GetDrawingEffect(clientDrawingContext, clientDrawingEffect);
         
         DrawingEffect* effect = static_cast<DrawingEffect*>(clientDrawingEffect);
@@ -477,6 +478,7 @@ public:
        };
         // Draw this as a rectangle, rather than a line.
         target_->FillRectangle(&rectangle, brush); 
+#endif        
         return S_OK;
     }
 
@@ -486,7 +488,10 @@ public:
         FLOAT baselineOriginY,
         const DWRITE_STRIKETHROUGH* strikethrough,
         IUnknown* clientDrawingEffect
-        );
+        )
+    {
+        return S_OK;
+    }
 
     IFACEMETHOD(DrawInlineObject)(
         void* clientDrawingContext,
@@ -496,22 +501,38 @@ public:
         BOOL isSideways,
         BOOL isRightToLeft,
         IUnknown* clientDrawingEffect
-        );
+        )
+    {
+        return S_OK;
+    }
+        
 
     IFACEMETHOD(IsPixelSnappingDisabled)(
         void* clientDrawingContext,
         OUT BOOL* isDisabled
-        );
+        )
+    {
+        return S_OK;
+    }
+        
 
     IFACEMETHOD(GetCurrentTransform)(
         void* clientDrawingContext,
         OUT DWRITE_MATRIX* transform
-        );
+        )
+    {
+        return S_OK;
+    }
+        
 
     IFACEMETHOD(GetPixelsPerDip)(
         void* clientDrawingContext,
         OUT FLOAT* pixelsPerDip
-        );
+        )
+    {
+        return S_OK;
+    }
+        
 
 public:
     // For cached images, to avoid needing to recreate the textures each draw call.
@@ -586,6 +607,171 @@ protected:
     HWND hwnd_;
     HMONITOR hmonitor_;
 
+};
+
+////////////////////////////////////////
+// Layouts were optimized for mostly static UI text, so a layout's text is
+// immutable upon creation. This means that when we modify the text, we must
+// create a new layout, copying the old properties over to the new one. This
+// class assists with that.
+
+class EditableLayout
+{
+public:
+    struct CaretFormat
+    {
+        // The important range based properties for the current caret.
+        // Note these are stored outside the layout, since the current caret
+        // actually has a format, independent of the text it lies between.
+        wchar_t fontFamilyName[100];
+        wchar_t localeName[LOCALE_NAME_MAX_LENGTH];
+        FLOAT fontSize;
+        DWRITE_FONT_WEIGHT fontWeight;
+        DWRITE_FONT_STRETCH fontStretch;
+        DWRITE_FONT_STYLE fontStyle;
+        UINT32 color;
+        BOOL hasUnderline;
+        BOOL hasStrikethrough;
+    };
+
+public:
+    EditableLayout(IDWriteFactory* factory)
+        :   factory_(SafeAcquire(factory))
+    {
+    }
+
+    ~EditableLayout()
+    {
+        SafeRelease(&factory_);
+    }
+
+public:
+    IDWriteFactory* GetFactory() { return factory_; }
+
+    /// Inserts a given string in the text layout's stored string at a certain text postion;
+    HRESULT STDMETHODCALLTYPE InsertTextAt(
+        IN OUT IDWriteTextLayout*& currentLayout,
+        IN OUT std::wstring& text,
+        UINT32 position,
+        WCHAR const* textToInsert,  // [lengthToInsert]
+        UINT32 textToInsertLength,
+        CaretFormat* caretFormat = NULL
+        )
+    {
+#if 0        
+        // Inserts text and shifts all formatting.
+        HRESULT hr = S_OK;
+
+        // The inserted string gets all the properties of the character right before position.
+        // If there is no text right before position, so use the properties of the character right after position.
+        // Copy all the old formatting.
+        IDWriteTextLayout* oldLayout = SafeAcquire(currentLayout);
+        UINT32 oldTextLength = static_cast<UINT32>(text.length());
+        position = PGCORE_Min(position, static_cast<UINT32>(text.size())); /// 
+
+        try
+        {
+            // Insert the new text and recreate the new text layout.
+            text.insert(position, textToInsert, textToInsertLength);
+        }
+        catch (...)
+        {
+            hr = ExceptionToHResult();
+        }
+
+        if (SUCCEEDED(hr))
+        {
+            hr = RecreateLayout(currentLayout, text); 
+        }
+
+        IDWriteTextLayout* newLayout = currentLayout;
+
+        if (SUCCEEDED(hr))
+        {
+            CopyGlobalProperties(oldLayout, newLayout);
+
+            // For each property, get the position range and apply it to the old text.
+            if (position == 0)
+            {
+                // Inserted text
+                CopySinglePropertyRange(oldLayout, 0, newLayout, 0, textToInsertLength);
+
+                // The rest of the text
+                CopyRangedProperties(oldLayout, 0, oldTextLength, textToInsertLength, newLayout);
+            }
+            else
+            {
+                // 1st block
+                CopyRangedProperties(oldLayout, 0, position, 0, newLayout);
+
+                // Inserted text
+                CopySinglePropertyRange(oldLayout, position - 1, newLayout, position, textToInsertLength, caretFormat);
+
+                // Last block (if it exists)
+                CopyRangedProperties(oldLayout, position, oldTextLength, textToInsertLength, newLayout);
+            }
+
+            // Copy trailing end.
+            CopySinglePropertyRange(oldLayout, oldTextLength, newLayout, static_cast<UINT32>(text.length()), UINT32_MAX);
+        }
+
+        SafeRelease(&oldLayout);
+#endif
+        return S_OK;
+        
+    }
+
+    /// Deletes a specified amount characters from the layout's stored string.
+    HRESULT STDMETHODCALLTYPE RemoveTextAt(
+        IN OUT IDWriteTextLayout*& currentLayout,
+        IN OUT std::wstring& text,
+        UINT32 position,
+        UINT32 lengthToRemove
+        )
+    {
+        return S_OK;
+    }
+        
+
+    HRESULT STDMETHODCALLTYPE Clear(
+        IN OUT IDWriteTextLayout*& currentLayout,
+        IN OUT std::wstring& text
+        )
+    {
+        return S_OK;
+    }
+
+private:
+    HRESULT STDMETHODCALLTYPE RecreateLayout(
+        IN OUT IDWriteTextLayout*& currentLayout,
+        const std::wstring& text
+        );
+
+    static void CopyGlobalProperties(
+        IDWriteTextLayout* oldLayout,
+        IDWriteTextLayout* newLayout
+        );
+
+    static void CopyRangedProperties(
+        IDWriteTextLayout* oldLayout,
+        UINT32 startPos,
+        UINT32 endPos,
+        UINT32 newLayoutTextOffset,
+        IDWriteTextLayout* newLayout,
+        bool isOffsetNegative = false
+        );
+
+    static void CopySinglePropertyRange(
+        IDWriteTextLayout* oldLayout,
+        UINT32 startPosForOld,
+        IDWriteTextLayout* newLayout,
+        UINT32 startPosForNew,
+        UINT32 length,
+        EditableLayout::CaretFormat* caretFormat = NULL
+        );
+
+public:
+    IDWriteFactory* factory_;
 };
 
 
