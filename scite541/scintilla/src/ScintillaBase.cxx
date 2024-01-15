@@ -811,7 +811,8 @@ void ScintillaBase::NotifyStyleToNeeded(Sci::Position endStyleNeeded) {
 	Editor::NotifyStyleToNeeded(endStyleNeeded);
 }
 
-sptr_t ScintillaBase::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
+sptr_t ScintillaBase::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) /// 窗口消息处理函数
+{
 	switch (iMessage) {
 	case Message::AutoCShow:
 		listType = 0;
@@ -1122,7 +1123,7 @@ sptr_t ScintillaBase::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
 				    DescriptionOfStyle(static_cast<int>(wParam)));
 
 	default:
-		return Editor::WndProc(iMessage, wParam, lParam);
+		return Editor::WndProc(iMessage, wParam, lParam); /// 缺省就转入到Editor的WndProc
 	}
 	return 0;
 }

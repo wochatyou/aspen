@@ -301,7 +301,7 @@ ID2D1Brush* RenderTargetD2D::GetCachedBrush(
     // Update the D2D brush to the new effect color.
     UINT32 bgra = effect->GetColor();
     float alpha = (bgra >> 24) / 255.0f;
-    brush_->SetColor(D2D1::ColorF(bgra, alpha));
+    brush_->SetColor(D2D1::ColorF(bgra, alpha)); /// 设置刷子的颜色。这个在回调函数中使用
 
     return brush_;
 }

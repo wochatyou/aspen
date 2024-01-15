@@ -694,7 +694,8 @@ D2D1_SIZE_U GetSizeUFromRect(const RECT &rc, const int scaleFactor) noexcept {
 
 }
 
-void ScintillaWin::EnsureRenderTarget(HDC hdc) {
+void ScintillaWin::EnsureRenderTarget(HDC hdc) 
+{
 	if (!renderTargetValid) {
 		DropRenderTarget();
 		renderTargetValid = true;
@@ -1002,14 +1003,18 @@ void ScintillaWin::SetRenderingParams([[maybe_unused]] Surface *psurf) const {
 #endif
 }
 
-bool ScintillaWin::PaintDC(HDC hdc) {
-	if (technology == Technology::Default) {
+bool ScintillaWin::PaintDC(HDC hdc) /// 窗口绘制函数
+{
+	if (technology == Technology::Default) 
+	{
 		AutoSurface surfaceWindow(hdc, this);
 		if (surfaceWindow) {
 			Paint(surfaceWindow, rcPaint);
 			surfaceWindow->Release();
 		}
-	} else {
+	} 
+	else 
+	{
 #if defined(USE_D2D)
 		EnsureRenderTarget(hdc);
 		if (pRenderTarget) {
@@ -1017,7 +1022,7 @@ bool ScintillaWin::PaintDC(HDC hdc) {
 			if (surfaceWindow) {
 				SetRenderingParams(surfaceWindow);
 				pRenderTarget->BeginDraw();
-				Paint(surfaceWindow, rcPaint);
+				Paint(surfaceWindow, rcPaint); /// 绘图的工作再这里！
 				surfaceWindow->Release();
 				const HRESULT hr = pRenderTarget->EndDraw();
 				if (hr == static_cast<HRESULT>(D2DERR_RECREATE_TARGET)) {
@@ -1032,7 +1037,8 @@ bool ScintillaWin::PaintDC(HDC hdc) {
 	return true;
 }
 
-sptr_t ScintillaWin::WndPaint() {
+sptr_t ScintillaWin::WndPaint() /// 绘制屏幕的窗口函数
+{
 	//ElapsedPeriod ep;
 
 	// Redirect assertions to debug output and save current state
@@ -2003,7 +2009,8 @@ sptr_t ScintillaWin::SciMessage(Message iMessage, uptr_t wParam, sptr_t lParam) 
 	return 0;
 }
 
-sptr_t ScintillaWin::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
+sptr_t ScintillaWin::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) // 这个是Window的消息处理窗口
+{
 	try {
 		//Platform::DebugPrintf("S M:%x WP:%x L:%x\n", iMessage, wParam, lParam);
 		const unsigned int msg = static_cast<unsigned int>(iMessage);
@@ -3555,7 +3562,8 @@ void ScintillaWin::Prepare() noexcept {
 	callClassAtom = ::RegisterClassEx(&wndclassc);
 }
 
-bool ScintillaWin::Register(HINSTANCE hInstance_) noexcept {
+bool ScintillaWin::Register(HINSTANCE hInstance_) noexcept /// 很简单，就是调用一个注册窗口类的函数
+{
 
 	hInstance = hInstance_;
 
@@ -3760,7 +3768,8 @@ sptr_t DirectFunction(
 }
 
 LRESULT PASCAL ScintillaWin::SWndProc(
-	HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
+	HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) /// 这个是主窗口函数
+{
 	//Platform::DebugPrintf("S W:%x M:%x WP:%x L:%x\n", hWnd, iMessage, wParam, lParam);
 
 	// Find C++ object associated with window.
@@ -3796,7 +3805,8 @@ LRESULT PASCAL ScintillaWin::SWndProc(
 
 // This function is externally visible so it can be called from container when building statically.
 // Must be called once only.
-extern "C" int Scintilla_RegisterClasses(void *hInstance) {
+extern "C" int Scintilla_RegisterClasses(void *hInstance) /// 这个函数是第一个要调用的函数
+{
 	const bool result = ScintillaWin::Register(static_cast<HINSTANCE>(hInstance));
 	return result;
 }
@@ -3817,6 +3827,7 @@ int RegisterClasses(void *hInstance) noexcept {
 }
 
 // This function is externally visible so it can be called from container when building statically.
-extern "C" int Scintilla_ReleaseResources() {
+extern "C" int Scintilla_ReleaseResources() /// 这是最后一个调用的函数
+{
 	return Scintilla::Internal::ResourcesRelease(false);
 }

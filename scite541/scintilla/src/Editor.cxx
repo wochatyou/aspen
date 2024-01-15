@@ -3778,7 +3778,8 @@ int Editor::DelWordOrLine(Message iMessage) {
 	return 0;
 }
 
-int Editor::KeyCommand(Message iMessage) {
+int Editor::KeyCommand(Message iMessage) /// 处理各种按键消息
+{
 	switch (iMessage) {
 	case Message::LineDown:
 		CursorUpOrDown(1, Selection::SelTypes::none);
@@ -6133,7 +6134,8 @@ sptr_t Editor::BytesResult(sptr_t lParam, const unsigned char *val, size_t len) 
 	return val ? len : 0;
 }
 
-sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) {
+sptr_t Editor::WndProc(Message iMessage, uptr_t wParam, sptr_t lParam) /// 主窗口函数
+{
 	//Platform::DebugPrintf("S start wnd proc %d %d %d\n",iMessage, wParam, lParam);
 
 	// Optional macro recording hook

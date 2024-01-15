@@ -288,7 +288,7 @@ LRESULT CALLBACK TextEditor::WindowProc(HWND hwnd, UINT message, WPARAM wParam, 
     case WM_NCCREATE:
         {
             // Associate the data structure with this window handle.
-            CREATESTRUCT* pcs = reinterpret_cast<CREATESTRUCT*>(lParam);
+            CREATESTRUCT* pcs = reinterpret_cast<CREATESTRUCT*>(lParam);WM_
             window = reinterpret_cast<TextEditor*>(pcs->lpCreateParams);
             window->hwnd_ = hwnd;
             window->AddRef(); // implicit reference via HWND
@@ -412,7 +412,7 @@ LRESULT CALLBACK TextEditor::WindowProc(HWND hwnd, UINT message, WPARAM wParam, 
 // Drawing/scrolling/sizing.
 
 
-void TextEditor::OnDraw()
+void TextEditor::OnDraw() /// 处理WM_PAINT的消息
 {
     PAINTSTRUCT ps;
     BeginPaint(hwnd_, &ps);
@@ -1080,7 +1080,7 @@ void TextEditor::GetLineFromPosition(
 }
 
 
-void TextEditor::AlignCaretToNearestCluster(bool isTrailingHit, bool skipZeroWidth)
+void TextEditor::AlignCaretToNearestCluster(bool isTrailingHit, bool skipZeroWidth) /// caretPosition_记录的是在字符串中的索引
 {
     // Uses hit-testing to align the current caret position to a whole cluster,
     // rather than residing in the middle of a base character + diacritic,
@@ -1133,7 +1133,7 @@ bool TextEditor::SetSelectionFromPoint(float x, float y, bool extendSelection)
     float transformedX = (x * matrix.m11 + y * matrix.m21 + matrix.dx);
     float transformedY = (x * matrix.m12 + y * matrix.m22 + matrix.dy);
 
-    textLayout_->HitTestPoint(
+    textLayout_->HitTestPoint( /// 测试鼠标的点击位置对应的字符
         transformedX,
         transformedY,
         &isTrailingHit,
@@ -1441,7 +1441,7 @@ bool TextEditor::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
 }
 
 
-void TextEditor::GetCaretRect(OUT RectF& rect) // 获得光标的位置
+void TextEditor::GetCaretRect(OUT RectF& rect) // 获得光标的位置，输入参数就是caretPosition_
 {
     // Gets the current caret position (in untransformed space).
 
@@ -1458,7 +1458,7 @@ void TextEditor::GetCaretRect(OUT RectF& rect) // 获得光标的位置
     textLayout_->HitTestTextPosition( //x-这个是WIN32 API，真正干活的
         caretPosition_,
         caretPositionOffset_ > 0, // trailing if nonzero, else leading edge
-        &caretX,
+        &caretX, /// 像素的位置
         &caretY,
         &caretMetrics ///后面三个都是输出结果
         );
@@ -1492,7 +1492,7 @@ void TextEditor::GetCaretRect(OUT RectF& rect) // 获得光标的位置
     rect.left   = caretX    - caretThickness / 2.0f;
     rect.right  = rect.left + caretThickness;
     rect.top    = caretY;
-    rect.bottom = caretY + caretMetrics.height;
+    rect.bottom = caretY + caretMetrics.height; /// 返回光标的绘制区域
 }
 
 
@@ -1584,7 +1584,7 @@ void TextEditor::CopyToClipboard()
 {
     // Copies selected text to clipboard.
 
-    DWRITE_TEXT_RANGE selectionRange = GetSelectionRange();
+    DWRITE_TEXT_RANGE selectionRange = GetSelectionRange(); /// 获得选择的文本的范围
     if (selectionRange.length <= 0)
         return;
 
@@ -1594,7 +1594,7 @@ void TextEditor::CopyToClipboard()
         if (EmptyClipboard())
         {
             // Allocate room for the text
-            size_t byteSize         = sizeof(wchar_t) * (selectionRange.length + 1);
+            size_t byteSize         = sizeof(wchar_t) * (selectionRange.length + 1); /// 字符串长度加1
             HGLOBAL hClipboardData  = GlobalAlloc(GMEM_DDESHARE | GMEM_ZEROINIT, byteSize);
 
             if (hClipboardData != NULL)
@@ -1605,7 +1605,7 @@ void TextEditor::CopyToClipboard()
                 {
                     // Copy text to memory block.
                     const wchar_t* text = text_.c_str();
-                    memcpy(memory, &text[selectionRange.startPosition], byteSize);
+                    memcpy(memory, &text[selectionRange.startPosition], byteSize); /// 拷贝指定的字符串
                     GlobalUnlock(hClipboardData);
 
                     if (SetClipboardData(CF_UNICODETEXT, hClipboardData) != NULL)

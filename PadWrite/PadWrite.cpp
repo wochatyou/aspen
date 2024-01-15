@@ -186,7 +186,7 @@ HRESULT MainWindow::Initialize()
     {
         hr = TextEditor::Create(
                 hwnd_,
-                g_sampleText,
+                g_sampleText, /// 把字符串输入进去
                 textFormat,
                 dwriteFactory_,
                 &textEditor_
