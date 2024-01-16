@@ -475,7 +475,7 @@ void TextEditor::DrawPage(RenderTarget& target) /// 显示屏幕的主函数
             caretRange.length,
             0, // x
             0, // y
-            &hitTestMetrics[0],
+            &hitTestMetrics[0], /// 这一次调用目的是获取这里面的信息
             static_cast<UINT32>(hitTestMetrics.size()),
             &actualHitTestCount
             );
@@ -1116,7 +1116,7 @@ void TextEditor::AlignCaretToNearestCluster(bool isTrailingHit, bool skipZeroWid
 }
 
 
-bool TextEditor::SetSelectionFromPoint(float x, float y, bool extendSelection)
+bool TextEditor::SetSelectionFromPoint(float x, float y, bool extendSelection) /// x,y是鼠标点击的位置
 {
     // Returns the text position corresponding to the mouse x,y.
     // If hitting the trailing side of a cluster, return the

@@ -282,7 +282,7 @@ void RenderTargetD2D::DrawTextLayout( /// 在指定的位置上绘制文本
         return;
 
     Context context(this, NULL);
-    textLayout->Draw( /// 这是Win32 API
+    textLayout->Draw( /// 这是Win32 API，它会调用用户提供的回调函数进行绘制
         &context,
         this,
         rect.left,
