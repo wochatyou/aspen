@@ -20,11 +20,12 @@ unsigned char cmark_strbuf__initbuf[1];
 #endif
 
 void cmark_strbuf_init(cmark_mem *mem, cmark_strbuf *buf,
-                       bufsize_t initial_size) {
+                       bufsize_t initial_size) 
+{
   buf->mem = mem;
   buf->asize = 0;
   buf->size = 0;
-  buf->ptr = cmark_strbuf__initbuf;
+  buf->ptr = cmark_strbuf__initbuf; /// 指向一个固定的非空值
 
   if (initial_size > 0)
     cmark_strbuf_grow(buf, initial_size);
@@ -34,13 +35,15 @@ static inline void S_strbuf_grow_by(cmark_strbuf *buf, bufsize_t add) {
   cmark_strbuf_grow(buf, buf->size + add);
 }
 
-void cmark_strbuf_grow(cmark_strbuf *buf, bufsize_t target_size) {
+void cmark_strbuf_grow(cmark_strbuf *buf, bufsize_t target_size) /// 把buf的体积增长到1.5倍的target_size
+{
   assert(target_size > 0);
 
-  if (target_size < buf->asize)
+  if (target_size < buf->asize) /// 如果小于
     return;
 
-  if (target_size > (bufsize_t)(INT32_MAX / 2)) {
+  if (target_size > (bufsize_t)(INT32_MAX / 2)) /// 太大了
+  {
     fprintf(stderr,
       "[cmark] cmark_strbuf_grow requests buffer with size > %d, aborting\n",
          (INT32_MAX / 2));
@@ -49,13 +52,13 @@ void cmark_strbuf_grow(cmark_strbuf *buf, bufsize_t target_size) {
 
   /* Oversize the buffer by 50% to guarantee amortized linear time
    * complexity on append operations. */
-  bufsize_t new_size = target_size + target_size / 2;
+  bufsize_t new_size = target_size + target_size / 2; /// 1.5倍
   new_size += 1;
-  new_size = (new_size + 7) & ~7;
+  new_size = (new_size + 7) & ~7; /// 按8字节对齐
 
   buf->ptr = (unsigned char *)buf->mem->realloc(buf->asize ? buf->ptr : NULL,
                                                 new_size);
-  buf->asize = new_size;
+  buf->asize = new_size; /// 记录actual size
 }
 
 bufsize_t cmark_strbuf_len(const cmark_strbuf *buf) { return buf->size; }

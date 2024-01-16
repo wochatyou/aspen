@@ -15,10 +15,11 @@ extern "C" {
 
 typedef int32_t bufsize_t;
 
-typedef struct {
-  cmark_mem *mem;
-  unsigned char *ptr;
-  bufsize_t asize, size;
+typedef struct 
+{
+  cmark_mem *mem; /// 内存分配子
+  unsigned char *ptr;  /// 数据区
+  bufsize_t asize, size; /// 需要的尺寸，分配的尺寸
 } cmark_strbuf;
 
 extern unsigned char cmark_strbuf__initbuf[];

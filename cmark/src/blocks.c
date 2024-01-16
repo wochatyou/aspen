@@ -55,7 +55,8 @@ static void S_set_last_line_checked(cmark_node *node) {
   node->flags |= CMARK_NODE__LAST_LINE_CHECKED;
 }
 
-static inline bool S_is_line_end_char(char c) {
+static inline bool S_is_line_end_char(char c)  /// 回车换行符
+{
   return (c == '\n' || c == '\r');
 }
 
@@ -70,10 +71,11 @@ static void S_process_line(cmark_parser *parser, const unsigned char *buffer,
                            bufsize_t bytes);
 
 static cmark_node *make_block(cmark_mem *mem, cmark_node_type tag,
-                              int start_line, int start_column) {
+                              int start_line, int start_column) 
+{
   cmark_node *e;
 
-  e = (cmark_node *)mem->calloc(1, sizeof(*e));
+  e = (cmark_node *)mem->calloc(1, sizeof(*e)); /// 申请一个节点的内存
   e->mem = mem;
   e->type = (uint16_t)tag;
   e->flags = CMARK_NODE__OPEN;
@@ -85,23 +87,25 @@ static cmark_node *make_block(cmark_mem *mem, cmark_node_type tag,
 }
 
 // Create a root document node.
-static cmark_node *make_document(cmark_mem *mem) {
+static cmark_node *make_document(cmark_mem *mem) 
+{
   cmark_node *e = make_block(mem, CMARK_NODE_DOCUMENT, 1, 1);
   return e;
 }
 
-cmark_parser *cmark_parser_new_with_mem(int options, cmark_mem *mem) {
-  cmark_parser *parser = (cmark_parser *)mem->calloc(1, sizeof(cmark_parser));
-  parser->mem = mem;
+cmark_parser *cmark_parser_new_with_mem(int options, cmark_mem *mem) 
+{
+  cmark_parser *parser = (cmark_parser *)mem->calloc(1, sizeof(cmark_parser)); /// 先分配一块内存
+  parser->mem = mem; /// 记录一下回调函数的信息
 
-  cmark_node *document = make_document(mem);
+  cmark_node *document = make_document(mem); /// 创建第一个节点，指向文档的根
 
   cmark_strbuf_init(mem, &parser->curline, 256);
-  cmark_strbuf_init(mem, &parser->linebuf, 0);
+  cmark_strbuf_init(mem, &parser->linebuf, 0); /// 0表示啥也不做
   cmark_strbuf_init(mem, &parser->content, 0);
 
   parser->refmap = cmark_reference_map_new(mem);
-  parser->root = document;
+  parser->root = document;     /// 记录根节点
   parser->current = document;
   parser->line_number = 0;
   parser->offset = 0;
@@ -119,7 +123,8 @@ cmark_parser *cmark_parser_new_with_mem(int options, cmark_mem *mem) {
   return parser;
 }
 
-cmark_parser *cmark_parser_new(int options) {
+cmark_parser *cmark_parser_new(int options) 
+{
   extern cmark_mem DEFAULT_MEM_ALLOCATOR;
   return cmark_parser_new_with_mem(options, &DEFAULT_MEM_ALLOCATOR);
 }
@@ -564,28 +569,30 @@ cmark_node *cmark_parse_document(const char *buffer, size_t len, int options) {
   return document;
 }
 
-void cmark_parser_feed(cmark_parser *parser, const char *buffer, size_t len) {
+void cmark_parser_feed(cmark_parser *parser, const char *buffer, size_t len) 
+{
   S_parser_feed(parser, (const unsigned char *)buffer, len, false);
 }
 
 static void S_parser_feed(cmark_parser *parser, const unsigned char *buffer,
-                          size_t len, bool eof) {
-  const unsigned char *end = buffer + len;
+                          size_t len, bool eof) 
+{
+  const unsigned char *end = buffer + len;  /// 指向数据区的结尾
   static const uint8_t repl[] = {239, 191, 189};
 
   if (len > UINT_MAX - parser->total_size)
     parser->total_size = UINT_MAX;
   else
-    parser->total_size += (int)len;
+    parser->total_size += (int)len; /// 体积增加
 
   // Skip UTF-8 BOM if present; see #334
   if (parser->line_number == 0 && parser->column == 0 && len >= 3 &&
       *buffer == 0xEF && *(buffer + 1) == 0xBB &&
-      *(buffer + 2) == 0xBF) {
+      *(buffer + 2) == 0xBF) { /// 跳过头3个字节
     buffer += 3;
   } else if (parser->last_buffer_ended_with_cr && *buffer == '\n') {
     // skip NL if last buffer ended with CR ; see #117
-    buffer++;
+    buffer++; /// 跳过回车
   }
 
   parser->last_buffer_ended_with_cr = false;
@@ -593,8 +600,9 @@ static void S_parser_feed(cmark_parser *parser, const unsigned char *buffer,
     const unsigned char *eol;
     bufsize_t chunk_len;
     bool process = false;
-    for (eol = buffer; eol < end; ++eol) {
-      if (S_is_line_end_char(*eol)) {
+    for (eol = buffer; eol < end; ++eol) /// 依次读取每一个字符，处理一行
+    {
+      if (S_is_line_end_char(*eol)) { /// 回车换行符
         process = true;
         break;
       }
@@ -1319,7 +1327,8 @@ finished:
   cmark_strbuf_clear(&parser->curline);
 }
 
-cmark_node *cmark_parser_finish(cmark_parser *parser) {
+cmark_node *cmark_parser_finish(cmark_parser *parser) 
+{
   if (parser->linebuf.size) {
     S_process_line(parser, parser->linebuf.ptr, parser->linebuf.size);
     cmark_strbuf_clear(&parser->linebuf);
@@ -1336,5 +1345,5 @@ cmark_node *cmark_parser_finish(cmark_parser *parser) {
     abort();
   }
 #endif
-  return parser->root;
+  return parser->root; /// 返回根节点
 }

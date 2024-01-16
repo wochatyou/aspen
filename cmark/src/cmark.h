@@ -94,7 +94,8 @@ typedef struct cmark_iter cmark_iter;
 /** Defines the memory allocation functions to be used by CMark
  * when parsing and allocating a document tree
  */
-typedef struct cmark_mem {
+typedef struct cmark_mem  /// 三个内存管理的指针，内存申请，内存释放
+{
   void *(*calloc)(size_t, size_t);
   void *(*realloc)(void *, size_t);
   void (*free)(void *);

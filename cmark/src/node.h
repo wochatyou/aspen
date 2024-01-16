@@ -53,14 +53,15 @@ enum cmark_node__internal_flags {
   CMARK_NODE__LIST_LAST_LINE_BLANK = (1 << 3),
 };
 
-struct cmark_node {
+struct cmark_node /// 节点
+{
   cmark_mem *mem;
 
   struct cmark_node *next;
   struct cmark_node *prev;
   struct cmark_node *parent;
   struct cmark_node *first_child;
-  struct cmark_node *last_child;
+  struct cmark_node *last_child; /// 组成一个树形结构
 
   void *user_data;
 

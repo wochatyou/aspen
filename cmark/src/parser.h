@@ -12,8 +12,9 @@ extern "C" {
 
 #define MAX_LINK_LABEL_LENGTH 1000
 
-struct cmark_parser {
-  struct cmark_mem *mem;
+struct cmark_parser /// 解析器的控制数据结构
+{
+  struct cmark_mem *mem; /// 内存分配的回调函数
   struct cmark_reference_map *refmap;
   struct cmark_node *root;
   struct cmark_node *current;

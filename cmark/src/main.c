@@ -46,12 +46,13 @@ void print_usage(void) {
 }
 
 static void print_document(cmark_node *document, writer_format writer,
-                           int options, int width) {
+                           int options, int width) 
+{
   char *result;
 
   switch (writer) {
   case FORMAT_HTML:
-    result = cmark_render_html(document, options);
+    result = cmark_render_html(document, options); /// width对html格式没有用处
     break;
   case FORMAT_XML:
     result = cmark_render_xml(document, options);
@@ -73,7 +74,8 @@ static void print_document(cmark_node *document, writer_format writer,
   document->mem->free(result);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) /// cmark的主入口函数
+{
   int i, numfps = 0;
   int *files;
   char buffer[4096];
@@ -83,7 +85,7 @@ int main(int argc, char *argv[]) {
   int width = 0;
   char *unparsed;
   writer_format writer = FORMAT_HTML;
-  int options = CMARK_OPT_DEFAULT;
+  int options = CMARK_OPT_DEFAULT; /// 32个bit可以表示32种状态
 
 #ifdef USE_PLEDGE
   if (pledge("stdio rpath", NULL) != 0) {
@@ -164,18 +166,20 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  parser = cmark_parser_new(options);
+  parser = cmark_parser_new(options); /// 分配一个parser的内存快，创建根节点
   for (i = 0; i < numfps; i++) {
-    FILE *fp = fopen(argv[files[i]], "rb");
+    FILE *fp = fopen(argv[files[i]], "rb"); /// 读取markdown的文件内容
     if (fp == NULL) {
       fprintf(stderr, "Error opening file %s: %s\n", argv[files[i]],
               strerror(errno));
       exit(1);
     }
 
-    while ((bytes = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
+    while ((bytes = fread(buffer, 1, sizeof(buffer), fp)) > 0) /// 一次读取4096个字节，依次灌入parser
+    {
       cmark_parser_feed(parser, buffer, bytes);
-      if (bytes < sizeof(buffer)) {
+      if (bytes < sizeof(buffer)) /// 读到最后一块了
+      {
         break;
       }
     }
@@ -200,12 +204,12 @@ int main(int argc, char *argv[]) {
   }
 #endif
 
-  document = cmark_parser_finish(parser);
+  document = cmark_parser_finish(parser); /// 解析完成
   cmark_parser_free(parser);
 
-  print_document(document, writer, options, width);
+  print_document(document, writer, options, width); /// 打印文档
 
-  cmark_node_free(document);
+  cmark_node_free(document); /// 释放文档的内存
 
   free(files);
 

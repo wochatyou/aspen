@@ -102,10 +102,12 @@ cmark_node *cmark_node_new(cmark_node_type type) {
 }
 
 // Free a cmark_node list and any children.
-static void S_free_nodes(cmark_node *e) {
+static void S_free_nodes(cmark_node *e) /// 这个节点只有孩子，没有父母和左右兄弟了
+{
   cmark_mem *mem = e->mem;
   cmark_node *next;
-  while (e != NULL) {
+  while (e != NULL) 
+  {
     switch (e->type) {
     case CMARK_NODE_CODE_BLOCK:
       mem->free(e->data);
@@ -141,8 +143,9 @@ static void S_free_nodes(cmark_node *e) {
   }
 }
 
-void cmark_node_free(cmark_node *node) {
-  S_node_unlink(node);
+void cmark_node_free(cmark_node *node) 
+{
+  S_node_unlink(node); /// 把这个节点从树上摘除
   node->next = NULL;
   S_free_nodes(node);
 }
@@ -652,7 +655,8 @@ int cmark_node_get_end_column(cmark_node *node) {
 }
 
 // Unlink a node without adjusting its next, prev, and parent pointers.
-static void S_node_unlink(cmark_node *node) {
+static void S_node_unlink(cmark_node *node) /// 把这个节点和它的孩子从树上摘除
+{
   if (node == NULL) {
     return;
   }

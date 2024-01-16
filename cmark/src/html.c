@@ -323,7 +323,8 @@ static int S_render_node(cmark_node *node, cmark_event_type ev_type,
   return 1;
 }
 
-char *cmark_render_html(cmark_node *root, int options) {
+char *cmark_render_html(cmark_node *root, int options) 
+{
   char *result;
   cmark_strbuf html = CMARK_BUF_INIT(root->mem);
   cmark_event_type ev_type;
