@@ -1425,7 +1425,8 @@ static void UpdateToolbarSidebarText(MainWindow* win) {
     win->favLabelWithClose->SetLabel(_TR("Favorites"));
 }
 
-static MainWindow* CreateMainWindow() {
+static MainWindow* CreateMainWindow() 
+{
     Rect windowPos = gGlobalPrefs->windowPos;
     if (!windowPos.IsEmpty()) {
         EnsureAreaVisibility(windowPos);
@@ -1436,7 +1437,7 @@ static MainWindow* CreateMainWindow() {
     int nShift = (int)gWindows.size();
     windowPos.x += (nShift * 15); // TODO: DPI scale
 
-    const WCHAR* clsName = FRAME_CLASS_NAME;
+    const WCHAR* clsName = FRAME_CLASS_NAME; /// #define FRAME_CLASS_NAME L"SUMATRA_PDF_FRAME"，就是最大的那个窗口
     const WCHAR* title = kSumatraWindowTitleW;
     DWORD style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN;
     int x = windowPos.x;
@@ -1444,7 +1445,7 @@ static MainWindow* CreateMainWindow() {
     int dx = windowPos.dx;
     int dy = windowPos.dy;
     HINSTANCE h = GetModuleHandle(nullptr);
-    HWND hwndFrame = CreateWindowExW(0, clsName, title, style, x, y, dx, dy, nullptr, nullptr, h, nullptr);
+    HWND hwndFrame = CreateWindowExW(0, clsName, title, style, x, y, dx, dy, nullptr, nullptr, h, nullptr); /// 创建主窗口
     if (!hwndFrame) {
         return nullptr;
     }
@@ -1516,7 +1517,8 @@ static MainWindow* CreateMainWindow() {
     return win;
 }
 
-MainWindow* CreateAndShowMainWindow(SessionData* data) {
+MainWindow* CreateAndShowMainWindow(SessionData* data) 
+{
     int windowState = gGlobalPrefs->windowState;
     MainWindow* win = CreateMainWindow();
     if (!win) {

@@ -962,7 +962,8 @@ static void testLogf() {
 // in mupdf_load_system_font.c
 extern "C" void destroy_system_font_list();
 
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) /// 主函数
+{
     int exitCode = 1; // by default it's error
     int nWithDde = 0;
     MainWindow* win = nullptr;
