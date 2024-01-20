@@ -69,7 +69,7 @@ namespace
         result.dy  = (matrix.dx  * matrix.m12 - matrix.m11 * matrix.dy)  * invdet;
     }
 
-    D2D1_POINT_2F GetPageSize(IDWriteTextLayout* textLayout)
+    D2D1_POINT_2F GetPageSize(IDWriteTextLayout* textLayout) /// 获得文本的尺寸，就是调用GetMetrics的方法
     {
         // Use the layout metrics to determine how large the page is, taking
         // the maximum of the content size and layout's maximal dimensions.
