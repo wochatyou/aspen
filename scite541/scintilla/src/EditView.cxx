@@ -702,7 +702,8 @@ Range EditView::RangeDisplayLine(Surface *surface, const EditModel &model, Sci::
 }
 
 SelectionPosition EditView::SPositionFromLocation(Surface *surface, const EditModel &model, PointDocument pt, bool canReturnInvalid,
-	bool charPosition, bool virtualSpace, const ViewStyle &vs, const PRectangle rcClient) {
+	bool charPosition, bool virtualSpace, const ViewStyle &vs, const PRectangle rcClient) /// 这个就和平台无关了
+{
 	pt.x = pt.x - vs.textStart;
 	Sci::Line visibleLine = static_cast<int>(std::floor(pt.y / vs.lineHeight));
 	if (!canReturnInvalid && (visibleLine < 0))

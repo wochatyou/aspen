@@ -35,7 +35,8 @@ size_t UTF8Length(std::wstring_view wsv) noexcept {
 	return len;
 }
 
-size_t UTF8PositionFromUTF16Position(std::string_view u8Text, size_t positionUTF16) noexcept {
+size_t UTF8PositionFromUTF16Position(std::string_view u8Text, size_t positionUTF16) noexcept /// 把UTF16的字符串位置变成UTF8的字符串位置
+{
 	size_t positionUTF8 = 0;
 	for (size_t lengthUTF16 = 0; (positionUTF8 < u8Text.length()) && (lengthUTF16 < positionUTF16);) {
 		const unsigned char uch = u8Text[positionUTF8];

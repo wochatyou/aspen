@@ -17,7 +17,8 @@ typedef double XYACCUMULATOR;
  * A geometric point class.
  * Point is similar to the Win32 POINT and GTK+ GdkPoint types.
  */
-class Point {
+class Point /// 描述点的位置信息
+{
 public:
 	XYPOSITION x;
 	XYPOSITION y;

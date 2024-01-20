@@ -2217,7 +2217,8 @@ ScreenLineLayout::~ScreenLineLayout() noexcept {
 
 // Get the position from the provided x
 
-size_t ScreenLineLayout::PositionFromX(XYPOSITION xDistance, bool charPosition) {
+size_t ScreenLineLayout::PositionFromX(XYPOSITION xDistance, bool charPosition) /// 根据鼠标坐标测试文本坐标
+{
 	if (!textLayout) {
 		return 0;
 	}
@@ -2230,7 +2231,7 @@ size_t ScreenLineLayout::PositionFromX(XYPOSITION xDistance, bool charPosition) 
 	BOOL isInside = FALSE;
 	DWRITE_HIT_TEST_METRICS caretMetrics {};
 
-	textLayout->HitTestPoint(
+	textLayout->HitTestPoint(  /// 这是关键的API
 		static_cast<FLOAT>(xDistance),
 		0.0f,
 		&isTrailingHit,
@@ -2249,7 +2250,7 @@ size_t ScreenLineLayout::PositionFromX(XYPOSITION xDistance, bool charPosition) 
 
 		// Align the caret to the nearest whole cluster.
 		textLayout->HitTestTextPosition(
-			caretMetrics.textPosition,
+			caretMetrics.textPosition, /// 这个值是表示鼠标点击了第几个字符
 			false,
 			&caretX,
 			&caretY,
