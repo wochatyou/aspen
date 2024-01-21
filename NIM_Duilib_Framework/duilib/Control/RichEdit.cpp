@@ -33,7 +33,7 @@ EXTERN_C const IID IID_ITextHost = { /* c5bdd8d0-d26e-11ce-a89e-00aa006cadc5 */
 
 #include <textserv.h>
 
-class CTxtWinHost : public ITextHost
+class CTxtWinHost : public ITextHost /// ITextHostæ˜¯å¾®è½¯æä¾›çš„æ¥å£
 {
 public:
     CTxtWinHost();
@@ -108,7 +108,7 @@ public:
 		if (NULL == pserv)
 			return FALSE;
 		LRESULT lRes = 0;
-		pserv->TxSendMessage(EM_CANPASTE, nFormat, 0L, &lRes);
+		pserv->TxSendMessage(EM_CANPASTE, nFormat, 0L, &lRes); /// å‘é€æ¶ˆæ¯ç»™COMå¯¹è±¡
 		return (BOOL)lRes;
 	}
 
@@ -173,7 +173,7 @@ public:
 private:
     RichEdit *m_re;
     ULONG	cRefs;					// Reference Count
-    ITextServices	*pserv;		    // pointer to Text Services object
+    ITextServices	*pserv;		    // pointer to Text Services object /// è¿™ä¸ªä¹Ÿæ˜¯å¾®è½¯æä¾›çš„æ¥å£
     // Properties
 
     DWORD		dwStyle;				// style bits
@@ -261,7 +261,7 @@ HRESULT InitDefaultParaFormat(RichEdit* re, PARAFORMAT2* ppf)
     return S_OK;
 }
 
-HRESULT CreateHost(RichEdit *re, const CREATESTRUCT *pcs, CTxtWinHost **pptec)
+HRESULT CreateHost(RichEdit *re, const CREATESTRUCT *pcs, CTxtWinHost **pptec) /// è¿™æ˜¯ä¸€ä¸ªå•ç‹¬çš„å‡½æ•°ï¼Œä¸å±äºä»»ä½•ç±»
 {
     HRESULT hr = E_FAIL;
     //GdiSetBatchLimit(1);
@@ -351,7 +351,7 @@ BOOL CTxtWinHost::Init(RichEdit *re, const CREATESTRUCT *pcs)
     //if(FAILED(CreateTextServices(NULL, this, &pUnk)))
     //    goto err;
 
-	//½â¾ö32Î»ÏµÍ³ÏÂ¿ç´°¿Ú¼äÍÏ×§ÎÄ×ÖÔÚwin7¼°win7ÒÔÏÂÏµÍ³ÉÏ»á³öÏÖÖØ¸´µÄÎÊÌâ£¨64Î»Ôİ²»ĞŞ¸´£© lty 20170714
+	//Â½Ã¢Â¾Ã¶32ÃÂ»ÃÂµÃÂ³ÃÃ‚Â¿Ã§Â´Â°Â¿ÃšÂ¼Ã¤ÃÃÃ—Â§ÃÃ„Ã—Ã–Ã”Ãšwin7Â¼Â°win7Ã’Ã”ÃÃ‚ÃÂµÃÂ³Ã‰ÃÂ»Ã¡Â³Ã¶ÃÃ–Ã–Ã˜Â¸Â´ÂµÃ„ÃÃŠÃŒÃ¢Â£Â¨64ÃÂ»Ã”ÃÂ²Â»ÃÃÂ¸Â´Â£Â© lty 20170714
 #if defined(_M_X64) || defined(__x86_64__)
 	edit_dll = L"msftedit.dll";
 #else
@@ -359,10 +359,10 @@ BOOL CTxtWinHost::Init(RichEdit *re, const CREATESTRUCT *pcs)
 	if (!(::GetFileAttributesW(edit_dll.c_str()) != INVALID_FILE_ATTRIBUTES))
 		edit_dll = L"msftedit.dll";
 #endif
-	hmod = LoadLibraryW(edit_dll.c_str()); //msftedit.dll
+	hmod = LoadLibraryW(edit_dll.c_str()); //msftedit.dll /// åŠ è½½åŠ¨æ€åº“
 	if (hmod)
 	{
-		TextServicesProc = (PCreateTextServices)GetProcAddress(hmod,"CreateTextServices");
+		TextServicesProc = (PCreateTextServices)GetProcAddress(hmod,"CreateTextServices"); /// è·å¾—å‡½æ•°æŒ‡é’ˆ
 	}
 
 	if (TextServicesProc)
@@ -468,7 +468,7 @@ int CTxtWinHost::TxReleaseDC(HDC hdc)
 
 BOOL CTxtWinHost::TxShowScrollBar(INT fnBar, BOOL fShow)
 {
-	ASSERT(FALSE); //ÔİÊ±×¢ÊÍµô£¬²»ÖªµÀÕâ´úÂëÓĞÉ¶ÓÃ   by panqinke 2014.5.6
+	ASSERT(FALSE); //Ã”ÃÃŠÂ±Ã—Â¢ÃŠÃÂµÃ´Â£Â¬Â²Â»Ã–ÂªÂµÃ€Ã•Ã¢Â´ÃºÃ‚Ã«Ã“ÃÃ‰Â¶Ã“Ãƒ   by panqinke 2014.5.6
     //ScrollBar* pVerticalScrollBar = m_re->GetVerticalScrollBar();
     //ScrollBar* pHorizontalScrollBar = m_re->GetHorizontalScrollBar();
     //if( fnBar == SB_VERT && pVerticalScrollBar ) {
@@ -2018,8 +2018,8 @@ void RichEdit::KillTimer(UINT idTimer)
 	}
 }
 
-// ¶àĞĞ·Çrich¸ñÊ½µÄricheditÓĞÒ»¸ö¹ö¶¯Ìõbug£¬ÔÚ×îºóÒ»ĞĞÊÇ¿ÕĞĞÊ±£¬LineDownºÍSetScrollPosÎŞ·¨¹ö¶¯µ½×îºó
-// ÒıÈëiPos¾ÍÊÇÎªÁËĞŞÕıÕâ¸öbug
+// Â¶Ã ÃÃÂ·Ã‡richÂ¸Ã±ÃŠÂ½ÂµÃ„richeditÃ“ÃÃ’Â»Â¸Ã¶Â¹Ã¶Â¶Â¯ÃŒÃµbugÂ£Â¬Ã”ÃšÃ—Ã®ÂºÃ³Ã’Â»ÃÃÃŠÃ‡Â¿Ã•ÃÃÃŠÂ±Â£Â¬LineDownÂºÃSetScrollPosÃÃÂ·Â¨Â¹Ã¶Â¶Â¯ÂµÂ½Ã—Ã®ÂºÃ³
+// Ã’Ã½ÃˆÃ«iPosÂ¾ÃÃŠÃ‡ÃÂªÃÃ‹ÃÃÃ•Ã½Ã•Ã¢Â¸Ã¶bug
 void RichEdit::SetScrollPos(CSize szPos)
 {
     int cx = 0;
@@ -2264,7 +2264,7 @@ void RichEdit::SetPos(UiRect rc)
             Layout::SetFloatPos(pControl, GetPos());
         }
         else {
-            pControl->SetPos(rc); // ËùÓĞ·Çfloat×Ó¿Ø¼ş·Å´óµ½Õû¸ö¿Í»§Çø
+            pControl->SetPos(rc); // Ã‹Ã¹Ã“ÃÂ·Ã‡floatÃ—Ã“Â¿Ã˜Â¼Ã¾Â·Ã…Â´Ã³ÂµÂ½Ã•Ã»Â¸Ã¶Â¿ÃÂ»Â§Ã‡Ã¸
         }
     }
 }
@@ -2475,8 +2475,8 @@ void RichEdit::OnKeyDown(EventArgs& event)
 			if (strNum.empty())
 				return;
 
-			SetClipBoardText(strNum); //ĞŞ¸Ä¼ôÇĞ°åÄÚÈİÎª´¿Êı×Ö
-			nbase::ThreadManager::PostTask([strClipText]() { SetClipBoardText(strClipText); }); //Õ³ÌùÍêºóÓÖ°Ñ¼ôÇĞ°åÄÚÈİ¸Ä»ØÀ´
+			SetClipBoardText(strNum); //ÃÃÂ¸Ã„Â¼Ã´Ã‡ÃÂ°Ã¥Ã„ÃšÃˆÃÃÂªÂ´Â¿ÃŠÃ½Ã—Ã–
+			nbase::ThreadManager::PostTask([strClipText]() { SetClipBoardText(strClipText); }); //Ã•Â³ÃŒÃ¹ÃÃªÂºÃ³Ã“Ã–Â°Ã‘Â¼Ã´Ã‡ÃÂ°Ã¥Ã„ÃšÃˆÃÂ¸Ã„Â»Ã˜Ã€Â´
 		}
 	}
 
@@ -3047,7 +3047,7 @@ void RichEdit::AddLinkInfo(const CHARRANGE cr, const std::wstring &linkInfo)
 	m_linkInfo.push_back(info);
 }
 
-//¸ù¾İpointÀ´hittest×Ô¶¨ÒålinkµÄÊı¾İ£¬·µ»Øtrue±íÊ¾ÔÚlinkÉÏ£¬infoÊÇlinkµÄ×Ô¶¨ÒåÊôĞÔ
+//Â¸Ã¹Â¾ÃpointÃ€Â´hittestÃ—Ã”Â¶Â¨Ã’Ã¥linkÂµÃ„ÃŠÃ½Â¾ÃÂ£Â¬Â·ÂµÂ»Ã˜trueÂ±Ã­ÃŠÂ¾Ã”ÃšlinkÃ‰ÃÂ£Â¬infoÃŠÃ‡linkÂµÃ„Ã—Ã”Â¶Â¨Ã’Ã¥ÃŠÃ´ÃÃ”
 bool RichEdit::HittestCustomLink(CPoint pt, std::wstring& info)
 {
 	bool bLink = false;
@@ -3074,7 +3074,7 @@ void RichEdit::ClearImageCache()
 	m_sFocusedImage.ClearCache();
 }
 
-//----------------ÏÂÃæº¯ÊıÓÃ×÷¸¨Öú ×Ö½ÚÊıÏŞÖÆ
+//----------------ÃÃ‚ÃƒÃ¦ÂºÂ¯ÃŠÃ½Ã“ÃƒÃ—Ã·Â¸Â¨Ã–Ãº Ã—Ã–Â½ÃšÃŠÃ½ÃÃÃ–Ã†
 bool IsAsciiChar(const wchar_t ch)
 {
 	return (ch <= 0x7e && ch >= 0x20);
@@ -3153,19 +3153,19 @@ void SetClipBoardText(const std::wstring &str)
 	}
 
 	size_t len = str.length();
-	HGLOBAL hMem = ::GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)); //·ÖÅäÈ«¾ÖÄÚ´æ  
+	HGLOBAL hMem = ::GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)); //Â·Ã–Ã…Ã¤ÃˆÂ«Â¾Ã–Ã„ÃšÂ´Ã¦  
 	if (!hMem) {
 		::CloseClipboard();
 		return;
 	}
 
-	wchar_t* lpStr = (wchar_t*)::GlobalLock(hMem); //Ëø×¡ÄÚ´æÇø 
-	::memcpy(lpStr, str.c_str(), len * sizeof(wchar_t)); //°ÑÊı¾İ¿½±´¿¼È«¾ÖÄÚ´æÖĞ
-	lpStr[len] = wchar_t(0); //×Ö·û´®Ä©Î²ÉèÎª'\0'
-	::GlobalUnlock(hMem); //ÊÍ·ÅËø 
+	wchar_t* lpStr = (wchar_t*)::GlobalLock(hMem); //Ã‹Ã¸Ã—Â¡Ã„ÃšÂ´Ã¦Ã‡Ã¸ 
+	::memcpy(lpStr, str.c_str(), len * sizeof(wchar_t)); //Â°Ã‘ÃŠÃ½Â¾ÃÂ¿Â½Â±Â´Â¿Â¼ÃˆÂ«Â¾Ã–Ã„ÃšÂ´Ã¦Ã–Ã
+	lpStr[len] = wchar_t(0); //Ã—Ã–Â·Ã»Â´Â®Ã„Â©ÃÂ²Ã‰Ã¨ÃÂª'\0'
+	::GlobalUnlock(hMem); //ÃŠÃÂ·Ã…Ã‹Ã¸ 
 
-	::SetClipboardData(CF_UNICODETEXT, hMem); //°ÑÄÚ´æÖĞµÄÊı¾İ·Åµ½¼ôÇĞ°åÉÏ
-	::CloseClipboard(); //¹Ø±Õ¼ôÇĞ°å	
+	::SetClipboardData(CF_UNICODETEXT, hMem); //Â°Ã‘Ã„ÃšÂ´Ã¦Ã–ÃÂµÃ„ÃŠÃ½Â¾ÃÂ·Ã…ÂµÂ½Â¼Ã´Ã‡ÃÂ°Ã¥Ã‰Ã
+	::CloseClipboard(); //Â¹Ã˜Â±Ã•Â¼Ã´Ã‡ÃÂ°Ã¥	
 }
 
 } // namespace ui
