@@ -78,7 +78,7 @@ namespace
         textLayout->GetMetrics(&textMetrics);
 
         float width  = PGCORE_Max(textMetrics.layoutWidth, textMetrics.left + textMetrics.width);
-        float height = PGCORE_Max(textMetrics.layoutHeight, textMetrics.height);
+        float height = PGCORE_Max(textMetrics.layoutHeight, textMetrics.height); /// height往往比layoutHeight更大
 
         D2D1_POINT_2F pageSize = {width, height};
         return pageSize;
@@ -832,8 +832,8 @@ void TextEditor::OnKeyPress(UINT32 keyCode)
     // Handles caret navigation and special presses that
     // do not generate characters.
 
-    bool heldShift   = (GetKeyState(VK_SHIFT)   & 0x80) != 0;
-    bool heldControl = (GetKeyState(VK_CONTROL) & 0x80) != 0;
+    bool heldShift   = (GetKeyState(VK_SHIFT)   & 0x80) != 0; /// 表示是否按下Shift键
+    bool heldControl = (GetKeyState(VK_CONTROL) & 0x80) != 0; /// 表示是否按下Ctrl键
 
     UINT32 absolutePosition = caretPosition_ + caretPositionOffset_;
 
@@ -916,7 +916,7 @@ void TextEditor::OnKeyPress(UINT32 keyCode)
         SetSelection(heldControl ? SetSelectionModeLeftWord : SetSelectionModeLeft, 1, heldShift);
         break;
 
-    case VK_RIGHT: // seek right one cluster
+    case VK_RIGHT: // seek right one cluster /// 如果同时按住Shift和Ctrl，就每次选择一个单词，而不是一个字符
         SetSelection(heldControl ? SetSelectionModeRightWord : SetSelectionModeRight, 1, heldShift);
         break;
 
@@ -1043,8 +1043,8 @@ void TextEditor::GetLineMetrics(
     DWRITE_TEXT_METRICS textMetrics;
     textLayout_->GetMetrics(&textMetrics);
 
-    lineMetrics.resize(textMetrics.lineCount);
-    textLayout_->GetLineMetrics(&lineMetrics.front(), textMetrics.lineCount, &textMetrics.lineCount);
+    lineMetrics.resize(textMetrics.lineCount); /// lineCount表示多少行
+    textLayout_->GetLineMetrics(&lineMetrics.front(), textMetrics.lineCount, &textMetrics.lineCount); /// 返回一个数组，每一个是每行的描述信息
 }
 
 
@@ -1226,10 +1226,10 @@ bool TextEditor::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
         break;
 
     case SetSelectionModeUp:
-    case SetSelectionModeDown:
+    case SetSelectionModeDown: /// 上下移动一行
         {
             // Retrieve the line metrics to figure out what line we are on.
-            std::vector<DWRITE_LINE_METRICS> lineMetrics;
+            std::vector<DWRITE_LINE_METRICS> lineMetrics; /// 数组，每个成员描述一行
             GetLineMetrics(lineMetrics);
 
             UINT32 linePosition;
@@ -1294,7 +1294,7 @@ bool TextEditor::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
                 &hitTestMetrics
                 );
 
-            caretPosition_       = hitTestMetrics.textPosition;
+            caretPosition_       = hitTestMetrics.textPosition; /// 改变一下光标的位置
             caretPositionOffset_ = isTrailingHit ? (hitTestMetrics.length > 0) : 0;
         }
         break;
