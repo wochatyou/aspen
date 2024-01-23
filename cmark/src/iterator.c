@@ -12,12 +12,14 @@ static const int S_leaf_mask =
     (1 << CMARK_NODE_SOFTBREAK) | (1 << CMARK_NODE_LINEBREAK) |
     (1 << CMARK_NODE_CODE) | (1 << CMARK_NODE_HTML_INLINE);
 
-cmark_iter *cmark_iter_new(cmark_node *root) {
-  if (root == NULL) {
+cmark_iter *cmark_iter_new(cmark_node *root) 
+{
+  if (root == NULL) /// 啥也不做
+  {
     return NULL;
   }
   cmark_mem *mem = root->mem;
-  cmark_iter *iter = (cmark_iter *)mem->calloc(1, sizeof(cmark_iter));
+  cmark_iter *iter = (cmark_iter *)mem->calloc(1, sizeof(cmark_iter)); /// 申请一块内存
   iter->mem = mem;
   iter->root = root;
   iter->cur.ev_type = CMARK_EVENT_NONE;
@@ -29,15 +31,17 @@ cmark_iter *cmark_iter_new(cmark_node *root) {
 
 void cmark_iter_free(cmark_iter *iter) { iter->mem->free(iter); }
 
-static bool S_is_leaf(cmark_node *node) {
+static bool S_is_leaf(cmark_node *node) /// 判断是不是叶子节点的逻辑？
+{
   return ((1 << node->type) & S_leaf_mask) != 0;
 }
 
-cmark_event_type cmark_iter_next(cmark_iter *iter) {
+cmark_event_type cmark_iter_next(cmark_iter *iter) 
+{
   cmark_event_type ev_type = iter->next.ev_type;
   cmark_node *node = iter->next.node;
 
-  iter->cur.ev_type = ev_type;
+  iter->cur.ev_type = ev_type; /// 把迭代子的next的值赋给cur，当前的
   iter->cur.node = node;
 
   if (ev_type == CMARK_EVENT_DONE) {
@@ -45,8 +49,10 @@ cmark_event_type cmark_iter_next(cmark_iter *iter) {
   }
 
   /* roll forward to next item, setting both fields */
-  if (ev_type == CMARK_EVENT_ENTER && !S_is_leaf(node)) {
-    if (node->first_child == NULL) {
+  if (ev_type == CMARK_EVENT_ENTER && !S_is_leaf(node)) 
+  {
+    if (node->first_child == NULL) /// 优先遍历节点的first_child
+    {
       /* stay on this node but exit */
       iter->next.ev_type = CMARK_EVENT_EXIT;
     } else {
@@ -79,7 +85,10 @@ void cmark_iter_reset(cmark_iter *iter, cmark_node *current,
   cmark_iter_next(iter);
 }
 
-cmark_node *cmark_iter_get_node(cmark_iter *iter) { return iter->cur.node; }
+cmark_node *cmark_iter_get_node(cmark_iter *iter) /// 返回当前的node
+{ 
+  return iter->cur.node; 
+}
 
 cmark_event_type cmark_iter_get_event_type(cmark_iter *iter) {
   return iter->cur.ev_type;

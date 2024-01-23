@@ -76,7 +76,8 @@ static int S_render_node(cmark_node *node, cmark_event_type ev_type,
     return 1;
   }
 
-  switch (node->type) {
+  switch (node->type) /// 根据节点的类型做不同的动作
+  {
   case CMARK_NODE_DOCUMENT:
     break;
 
@@ -330,9 +331,10 @@ char *cmark_render_html(cmark_node *root, int options)
   cmark_event_type ev_type;
   cmark_node *cur;
   struct render_state state = {&html, NULL};
-  cmark_iter *iter = cmark_iter_new(root);
+  cmark_iter *iter = cmark_iter_new(root); /// 根据root节点，创建一个迭代子数据结构
 
-  while ((ev_type = cmark_iter_next(iter)) != CMARK_EVENT_DONE) {
+  while ((ev_type = cmark_iter_next(iter)) != CMARK_EVENT_DONE) 
+  {
     cur = cmark_iter_get_node(iter);
     S_render_node(cur, ev_type, &state, options);
   }

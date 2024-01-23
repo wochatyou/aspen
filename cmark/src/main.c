@@ -48,7 +48,7 @@ void print_usage(void) {
 static void print_document(cmark_node *document, writer_format writer,
                            int options, int width) 
 {
-  char *result;
+  char *result; /// 这个字符串里面包含最终的文档
 
   switch (writer) {
   case FORMAT_HTML:
