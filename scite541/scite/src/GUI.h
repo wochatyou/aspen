@@ -55,7 +55,7 @@ typedef std::string_view gui_string_view;
 
 #define GUI_TEXT(q) q
 
-#else
+#else /// Win32使用UTF-6，而苹果使用UTF-8
 
 // On Win32 use UTF-16 wide char strings
 

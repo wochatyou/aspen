@@ -37,7 +37,7 @@ HRESULT EditableLayout::RecreateLayout(
             );
 
     if (SUCCEEDED(hr))
-        SafeAttach(&currentLayout, SafeDetach(&newLayout));
+        SafeAttach(&currentLayout, SafeDetach(&newLayout)); /// 就是把newLayout赋值给currentLayout，同时把newLayout变为NULL
 
     SafeRelease(&newLayout);
 

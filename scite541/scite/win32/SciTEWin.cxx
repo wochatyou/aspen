@@ -1406,15 +1406,17 @@ void SciTEWin::WorkerCommand(int cmd, Worker *pWorker) {
 	}
 }
 
-void SciTEWin::QuitProgram() {
+void SciTEWin::QuitProgram() /// 退出程序
+{
 	quitting = false;
 	if (SaveIfUnsureAll() != SaveResult::cancelled) {
 		if (fullScreen)	// Ensure tray visible on exit
 			FullScreenToggle();
 		quitting = true;
 		// If ongoing saves, wait for them to complete.
-		if (!buffers.SavingInBackground()) {
-			::PostQuitMessage(0);
+		if (!buffers.SavingInBackground()) 
+		{
+			::PostQuitMessage(0); /// 中断消息循环
 			wSciTE.Destroy();
 		}
 	}
@@ -2396,7 +2398,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 	SciTEWin::Register(hInstance);
 	Lexilla::SetDefaultDirectory(GetSciTEPath(FilePath()).AsUTF8());
-#ifdef STATIC_BUILD
+#ifdef STATIC_BUILD /// 静态链接
 	Scintilla_RegisterClasses(hInstance);
 	Lexilla::SetDefault(CreateLexer);
 #else

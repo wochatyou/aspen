@@ -529,7 +529,7 @@ public:
 	STDMETHODIMP GetData(FORMATETC *pFEIn, STGMEDIUM *pSTM);
 
 	static void Prepare() noexcept;
-	static bool Register(HINSTANCE hInstance_) noexcept;
+	static bool Register(HINSTANCE hInstance_) noexcept; /// 这是一个static函数
 	static bool Unregister() noexcept;
 
 	bool DragIsRectangularOK(CLIPFORMAT fmt) const noexcept {
@@ -1555,9 +1555,11 @@ void ScintillaWin::SizeWindow() {
 	ChangeSize();
 }
 
-sptr_t ScintillaWin::MouseMessage(unsigned int iMessage, uptr_t wParam, sptr_t lParam) {
+sptr_t ScintillaWin::MouseMessage(unsigned int iMessage, uptr_t wParam, sptr_t lParam) 
+{
 	switch (iMessage) {
-	case WM_LBUTTONDOWN: {
+	case WM_LBUTTONDOWN: /// 处理鼠标按下的消息
+		{
 			// For IME, set the composition string as the result string.
 			IMContext imc(MainHWND());
 			if (imc.hIMC) {

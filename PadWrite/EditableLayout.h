@@ -43,7 +43,7 @@ struct MakeDWriteTextRange : public DWRITE_TEXT_RANGE
 // create a new layout, copying the old properties over to the new one. This
 // class assists with that.
 
-class EditableLayout
+class EditableLayout /// 布局是和文本绑定的。一旦文本发生了变化，就要重新创建布局，譬如你敲了一个字符
 {
 public:
     struct CaretFormat

@@ -1332,7 +1332,8 @@ constexpr D2D1_RECT_F RectangleInset(D2D1_RECT_F rect, FLOAT inset) noexcept {
 
 class BlobInline;
 
-class SurfaceD2D : public Surface, public ISetRenderingParams {
+class SurfaceD2D : public Surface, public ISetRenderingParams /// Direct2D的Surface
+{
 	SurfaceMode mode;
 
 	ID2D1RenderTarget *pRenderTarget = nullptr;
@@ -1442,7 +1443,7 @@ SurfaceD2D::SurfaceD2D(ID2D1RenderTarget *pRenderTargetCompatible, int width, in
 	if (SUCCEEDED(hr)) {
 		pRenderTarget = pBitmapRenderTarget;
 		SetDeviceScaleFactor(pRenderTarget);
-		pRenderTarget->BeginDraw();
+		pRenderTarget->BeginDraw(); /// -------------------- 开始绘图
 		ownRenderTarget = true;
 	}
 	mode = mode_;
@@ -1461,7 +1462,7 @@ void SurfaceD2D::Clear() noexcept {
 			clipsActive--;
 		}
 		if (ownRenderTarget) {
-			pRenderTarget->EndDraw();
+			pRenderTarget->EndDraw(); /// ------- 结束绘图，必须成对出现
 			ReleaseUnknown(pRenderTarget);
 			ownRenderTarget = false;
 		}

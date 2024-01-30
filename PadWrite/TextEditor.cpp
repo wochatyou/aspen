@@ -696,7 +696,7 @@ void TextEditor::OnMousePress(UINT message, float x, float y)
     if (message == WM_LBUTTONDOWN)
     {
         // Start dragging selection.
-        currentlySelecting_ = true;
+        currentlySelecting_ = true; /// 这个布尔变量表示是否处于拖拽模式
 
         bool heldShift = (GetKeyState(VK_SHIFT) & 0x80) != 0;
         SetSelectionFromPoint(x, y, heldShift);

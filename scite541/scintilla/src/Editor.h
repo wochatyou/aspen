@@ -240,7 +240,7 @@ protected:	// ScintillaBase subclass needs access to much of Editor
 	bool dwelling;
 	enum class TextUnit { character, word, subLine, wholeLine } selectionUnit;
 	Point ptMouseLast;
-	enum class DragDrop { none, initial, dragging } inDragDrop;
+	enum class DragDrop { none, initial, dragging } inDragDrop; /// 拖拽的模式
 	bool dropWentOutside;
 	SelectionPosition posDrop;
 	Sci::Position hotSpotClickPos;

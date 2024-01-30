@@ -4656,7 +4656,8 @@ static constexpr bool AllowVirtualSpace(VirtualSpace virtualSpaceOptions, bool r
 	return FlagSet(virtualSpaceOptions, (rectangular ? VirtualSpace::RectangularSelection : VirtualSpace::UserAccessible));
 }
 
-void Editor::ButtonDownWithModifiers(Point pt, unsigned int curTime, KeyMod modifiers) {
+void Editor::ButtonDownWithModifiers(Point pt, unsigned int curTime, KeyMod modifiers) 
+{
 	SetHoverIndicatorPoint(pt);
 	//Platform::DebugPrintf("ButtonDown %d %d = %d alt=%d %d\n", curTime, lastClickTime, curTime - lastClickTime, alt, inDragDrop);
 	ptMouseLast = pt;
