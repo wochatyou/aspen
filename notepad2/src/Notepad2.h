@@ -21,12 +21,13 @@
 
 
 //==== Main Window ============================================================
-#define WC_NOTEPAD2 L"Notepad2"
+#define WC_NOTEPAD2 L"Notepad2" /// 定义窗口类的名称
 
 
 //==== Data Type for WM_COPYDATA ==============================================
 #define DATA_NOTEPAD2_PARAMS 0xFB10
-typedef struct np2params {
+typedef struct np2params /// 参数的集合
+{
 
   int   flagFileSpecified;
   int   flagChangeNotify;
@@ -68,7 +69,7 @@ typedef struct np2params {
 
 
 //==== Statusbar ==============================================================
-#define STATUS_DOCPOS    0
+#define STATUS_DOCPOS    0 /// 这些都和界面上的底部状态栏对应
 #define STATUS_DOCSIZE   1
 #define STATUS_CODEPAGE  2
 #define STATUS_EOLMODE   3

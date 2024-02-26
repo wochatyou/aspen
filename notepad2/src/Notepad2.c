@@ -6030,7 +6030,7 @@ void UpdateToolbar()
   EnableTool(IDT_EDIT_REPLACE,i /*&& !bReadOnly*/);
   EnableTool(IDT_EDIT_CLEAR,i /*&& !bReadOnly*/);
 
-  CheckTool(IDT_VIEW_WORDWRAP,fWordWrap);
+  CheckTool(IDT_VIEW_WORDWRAP,*);
 
 }
 
